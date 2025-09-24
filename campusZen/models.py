@@ -1,7 +1,5 @@
 from django.db import models
 
-# Create your models here.
-
 class Personne(models.Model):
     idPers = models.AutoField(primary_key=True)
     emailPers = models.CharField(max_length=255)
@@ -10,7 +8,7 @@ class Personne(models.Model):
     lastConnection = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.idPers, self.emailPers, self.role, self.lastConnection
+        return f"{self.idPers} - {self.emailPers} - {self.role} - {self.lastConnection}"
     
 class Professionnel(models.Model):
     idPro = models.AutoField(primary_key=True)
@@ -22,14 +20,14 @@ class Professionnel(models.Model):
     adressePro = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.idPro, self.nomPro, self.prenomPro, self.emailPro, self.fonctionPro, self.telephonePro, self.adressePro
+        return f"{self.idPro} - {self.nomPro} - {self.prenomPro} - {self.emailPro} - {self.fonctionPro} - {self.telephonePro} - {self.adressePro}"
 
 class Climat(models.Model):
     idClimat = models.AutoField(primary_key=True)
     nomClimat = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.idClimat, self.nomClimat
+        return f"{self.idClimat} - {self.nomClimat}"
 
 class Message(models.Model):
     idMessage = models.AutoField(primary_key=True)
@@ -37,7 +35,7 @@ class Message(models.Model):
     idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_messages", null=False, blank=False)
 
     def __str__(self):
-        return self.idMessage, self.message, self.idClimat
+        return f"{self.idMessage} - {self.message} - {self.idClimat}"
     
 class Ressource(models.Model):
     idR = models.AutoField(primary_key=True)
@@ -47,7 +45,7 @@ class Ressource(models.Model):
     lienR = models.CharField(max_length=1000)
 
     def __str__(self):
-        return self.idR, self.typeR, self.titreR, self.descriptionR, self.lienR
+        return f"{self.idR} - {self.typeR} - {self.titreR} - {self.descriptionR} - {self.lienR}"
     
 class Avis(models.Model):
     idAvis = models.AutoField(primary_key=True)
@@ -57,14 +55,14 @@ class Avis(models.Model):
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_avis", null=False, blank=False)
 
     def __str__(self):
-        return self.idAvis, self.nbEtoile, self.messageAvis, self.dateAvis, self.idPers
+        return f"{self.idAvis} - {self.nbEtoile} - {self.messageAvis} - {self.dateAvis} - {self.idPers}"
     
 class Question(models.Model):
     idQuestion = models.AutoField(primary_key=True)
     question = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.idQuestion, self.question
+        return f"{self.idQuestion} - {self.question}"
     
 class Statut(models.Model):
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_statuts", null=False, blank=False)
@@ -72,14 +70,14 @@ class Statut(models.Model):
     dateStatut = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.idClimat, self.idPers, self.dateStatut
+        return f"{self.idClimat} - {self.idPers} - {self.dateStatut}"
 
 class ConsulteRessource(models.Model):
     idR = models.ForeignKey(Ressource, on_delete=models.CASCADE, related_name="ressources_consultes", null=False, blank=False)
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_consultes", null=False, blank=False)
 
     def __str__(self):
-        return self.idR, self.idPers
+        return f"{self.idR} - {self.idPers}"
     
 class Recu(models.Model):
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_recus", null=False, blank=False)
@@ -87,13 +85,11 @@ class Recu(models.Model):
     dateMessage = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.idMessage, self.idPers, self.dateMessage
+        return f"{self.idMessage} - {self.idPers} - {self.dateMessage}"
     
 class ConsultePro(models.Model):
     idPro = models.ForeignKey(Professionnel, on_delete=models.CASCADE, related_name="professionnels_consultes", null=False, blank=False)
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_consultesPro", null=False, blank=False)
 
     def __str__(self):
-        return self.idPro, self.idPers
-
-
+        return f"{self.idPro} - {self.idPers}"
