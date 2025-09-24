@@ -51,7 +51,13 @@ class ConsulteProSerializer(serializers.ModelSerializer):
         model = ConsultePro
         fields = '__all__'
 
-class ConsulteProSerializer(serializers.ModelSerializer):
+class StatutSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ConsultePro
+        model = Statut
         fields = '__all__'
+
+class RecuSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recu
+        fields = '__all__'
+
