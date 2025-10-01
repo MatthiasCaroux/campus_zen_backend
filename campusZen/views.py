@@ -54,13 +54,12 @@ class ConsulteProViewSet(viewsets.ModelViewSet):
 
 
 class RegisterView(generics.CreateAPIView):
-
-    def get(self, request):
-        return Response({"message": "Veuillez utiliser la méthode POST pour vous inscrire."}, status=status.HTTP_200_OK)
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
     permission_classes = [permissions.AllowAny]
 
+    def get(self, request):
+        return Response({"message": "Veuillez utiliser la méthode POST pour vous inscrire."}, status=status.HTTP_200_OK)
 class LoginView(APIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = PersonneSerializer
