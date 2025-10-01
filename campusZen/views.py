@@ -21,7 +21,7 @@ class ClimatViewSet(viewsets.ModelViewSet):
     serializer_class = ClimatSerializer
 
 class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
+    queryset = Message.objects.select_related('idClimat').all()
     serializer_class = MessageSerializer
 
 class RessourceViewSet(viewsets.ModelViewSet):
@@ -29,7 +29,7 @@ class RessourceViewSet(viewsets.ModelViewSet):
     serializer_class = RessourceSerializer
 
 class AvisViewSet(viewsets.ModelViewSet):
-    queryset = Avis.objects.all()
+    queryset = Avis.objects.select_related('idPers').all()
     serializer_class = AvisSerializer
 
 class QuestionViewSet(viewsets.ModelViewSet):
@@ -37,15 +37,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
 
 class StatutViewSet(viewsets.ModelViewSet):
-    queryset = Statut.objects.all()
+    queryset = Statut.objects.select_related("idPers", "idClimat").all()
     serializer_class = StatutSerializer
 
 class ConsulteRessourceViewSet(viewsets.ModelViewSet):
-    queryset = ConsulteRessource.objects.all()
+    queryset = ConsulteRessource.objects.select_related('idR', 'idPers').all()
     serializer_class = ConsulteRessourceSerializer
 
 class RecuViewSet(viewsets.ModelViewSet):
-    queryset = Recu.objects.all()
+    queryset = Recu.objects.select_related("idPers", "idMessage").all()
     serializer_class = RecuSerializer
 
 class ConsulteProViewSet(viewsets.ModelViewSet):

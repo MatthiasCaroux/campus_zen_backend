@@ -5,7 +5,7 @@ class Personne(models.Model):
     idPers = models.AutoField(primary_key=True)
     emailPers = models.EmailField(max_length=255, unique=True)
     passwordPers = models.CharField(max_length=255)  # sera hashé
-    role = models.CharField(max_length=50, default='étudiant')
+    role = models.CharField(max_length=50, choices=(('étudiant', 'Étudiant'), ('admin', 'Admin')), default='étudiant')
     lastConnection = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -27,19 +27,19 @@ class Professionnel(models.Model):
     nomPro = models.CharField(max_length=255)
     prenomPro = models.CharField(max_length=255)
     fonctionPro = models.CharField(max_length=255)
-    emailPro = models.CharField(max_length=255)
+    emailPro = models.EmailField(unique=True)
     telephonePro = models.CharField(max_length=20)
     adressePro = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.idPro} - {self.nomPro} - {self.prenomPro} - {self.emailPro} - {self.fonctionPro} - {self.telephonePro} - {self.adressePro}"
+        return f"{self.nomPro} - {self.prenomPro} - {self.emailPro} - {self.fonctionPro}"
 
 class Climat(models.Model):
     idClimat = models.AutoField(primary_key=True)
     nomClimat = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.idClimat} - {self.nomClimat}"
+        return f"{self.nomClimat}"
 
 class Message(models.Model):
     idMessage = models.AutoField(primary_key=True)
@@ -57,7 +57,7 @@ class Ressource(models.Model):
     lienR = models.CharField(max_length=1000)
 
     def __str__(self):
-        return f"{self.idR} - {self.typeR} - {self.titreR} - {self.descriptionR} - {self.lienR}"
+        return f"{self.titreR} - {self.typeR}"
     
 class Avis(models.Model):
     idAvis = models.AutoField(primary_key=True)

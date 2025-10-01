@@ -25,9 +25,14 @@ class ClimatSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class MessageSerializer(serializers.ModelSerializer):
+    idClimat = ClimatSerializer(read_only=True)
+    idClimat_id = serializers.PrimaryKeyRelatedField(
+        queryset=Climat.objects.all(), source="idClimat", write_only=True
+    )
     class Meta:
         model = Message
-        fields = '__all__'
+        # fields = '__all__'
+        fields = ["idMessage", "message", "idClimat", "idClimat_id"]
 
 class RessourceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +40,7 @@ class RessourceSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AvisSerializer(serializers.ModelSerializer):
+    idPers = PersonneSerializer()
     class Meta:
         model = Avis
         fields = '__all__'
@@ -55,6 +61,8 @@ class ConsulteProSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ConsulteRessourceSerializer(serializers.ModelSerializer):
+    # idR = RessourceSerializer()
+    # idPers = PersonneSerializer()
     class Meta:
         model = ConsulteRessource
         fields = '__all__'
