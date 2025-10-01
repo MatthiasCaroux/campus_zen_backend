@@ -1,15 +1,27 @@
 from django.db import models
+from django.contrib.auth.hashers import make_password, check_password
 
 class Personne(models.Model):
     idPers = models.AutoField(primary_key=True)
-    emailPers = models.EmailField(unique=True)
-    passwordPers = models.CharField(max_length=255)
+    emailPers = models.EmailField(max_length=255, unique=True)
+    passwordPers = models.CharField(max_length=255)  # sera hashé
     role = models.CharField(max_length=50, choices=(('étudiant', 'Étudiant'), ('admin', 'Admin')), default='étudiant')
     lastConnection = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.emailPers} - {self.role}"
-    
+        return f"{self.idPers} - {self.emailPers} - {self.role} - {self.lastConnection}"
+
+    def set_password(self, password):
+        self.passwordPers = make_password(password)
+
+    def check_password(self, password):
+        return check_password(password, self.passwordPers)
+
+    @property
+    def id(self):
+        # alias pour que JWT trouve un "id"
+        return self.idPers
+
 class Professionnel(models.Model):
     idPro = models.AutoField(primary_key=True)
     nomPro = models.CharField(max_length=255)

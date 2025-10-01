@@ -2,9 +2,22 @@ from rest_framework import serializers
 from .models import *
 
 class PersonneSerializer(serializers.ModelSerializer):
+    passwordPers = serializers.CharField(write_only=True)
+
     class Meta:
         model = Personne
-        fields = '__all__'
+        fields = ("idPers", "emailPers", "passwordPers", "lastConnection")
+
+    def create(self, validated_data):
+        password = validated_data.pop("passwordPers")
+        personne = Personne(**validated_data)
+        personne.set_password(password)  # hash le mdp
+        personne.save()
+        return personne
+
+    @property
+    def id(self):  # simple alias pour JWT
+        return self.idPers
 
 class ClimatSerializer(serializers.ModelSerializer):
     class Meta:
