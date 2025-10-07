@@ -1,0 +1,47 @@
+[MASTER]
+ignore=CVS, migrations
+load-plugins=pylint_django
+
+[MESSAGES CONTROL]
+# Désactive certaines règles trop strictes ou inutiles pour Django
+disable=
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    R0903, # too-few-public-methods
+    W0613, # unused-argument
+    C0301, # line-too-long
+    C0103, # not conforming to snake_case naming style
+    E5110, # no-member (Django ORM dynamic attributes)
+
+[FORMAT]
+max-line-length=120
+
+[BASIC]
+good-names=i,j,k,_,pk,id,qs
+
+[DESIGN]
+max-args=10
+max-attributes=15
+max-locals=20
+max-branches=15
+max-statements=80
+max-parents=10
+min-public-methods=0
+
+[REPORTS]
+score=yes
+
+[TYPECHECK]
+ignored-modules=django,rest_framework
+
+[SIMILARITIES]
+min-similarity-lines=6
+ignore-comments=yes
+ignore-docstrings=yes
+
+[LOGGING]
+logging-format-style=old
+
+[MISCELLANEOUS]
+notes=FIXME,XXX,TODO

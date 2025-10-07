@@ -47,3 +47,7 @@ Thumbs.db
 .docker/
 
 __pycache__/
+
+notes.txt
+.coverage
+pylint-report.txt
