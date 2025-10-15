@@ -83,7 +83,6 @@ class Questionnaire(models.Model):
 
     def __str__(self):
         return f"{self.idQuestionnaire} - {self.nomQuestionnaire}"
-    
 
 
 class Question(models.Model):
@@ -94,7 +93,7 @@ class Question(models.Model):
 
     def __str__(self):
         return f"{self.idQuestion} - {self.question}"
-    
+
 
 class Reponse(models.Model):
     textReponse = models.CharField(max_length=255)
@@ -103,10 +102,9 @@ class Reponse(models.Model):
 
     questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="questions_reponses", null=False, blank=False)
 
-
     def __str__(self):
         return f"{self.idReponse} - {self.textReponse} - {self.score} - {self.poids} - {self.idQuestion} - {self.idQuestionnaire}"
-    
+
 class Seuil(models.Model):
     idQuestionnaire = models.AutoField(primary_key=True)
     idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_seuils", null=False, blank=False)
