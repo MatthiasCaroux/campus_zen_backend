@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 
 class PersonneSerializer(serializers.ModelSerializer):
@@ -7,12 +8,13 @@ class PersonneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personne
-        fields = ("idPers", "emailPers", "passwordPers", "lastConnection")
+        fields = ("idPers", "emailPers", "passwordPers", "role", "lastConnection")
 
     def create(self, validated_data):
-        password = validated_data.pop("passwordPers")
+        password = validated_data.pop("passwordPers", None)
         personne = Personne(**validated_data)
-        personne.set_password(password)  # hash le mdp
+        if password:
+            personne.set_password(password)
         personne.save()
         return personne
 
@@ -20,6 +22,14 @@ class PersonneSerializer(serializers.ModelSerializer):
     def id(self):  # simple alias pour JWT
         return self.idPers
 
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token['idPers'] = user.idPers
+        token['role'] = user.role
+        token['emailPers'] = user.emailPers
+        return token
 
 class ClimatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,14 +38,9 @@ class ClimatSerializer(serializers.ModelSerializer):
 
 
 class MessageSerializer(serializers.ModelSerializer):
-    idClimat = ClimatSerializer(read_only=True)
-    idClimat_id = serializers.PrimaryKeyRelatedField(
-        queryset=Climat.objects.all(), source="idClimat", write_only=True)
-
     class Meta:
         model = Message
-        # fields = '__all__'
-        fields = ["idMessage", "message", "idClimat", "idClimat_id"]
+        fields = '__all__'
 
 
 class RessourceSerializer(serializers.ModelSerializer):
@@ -65,8 +70,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class ConsulteRessourceSerializer(serializers.ModelSerializer):
-    # idR = RessourceSerializer()
-    # idPers = PersonneSerializer()
     class Meta:
         model = ConsulteRessource
         fields = '__all__'
