@@ -76,12 +76,46 @@ class Avis(models.Model):
         return f"{self.idAvis} - {self.nbEtoile} - {self.messageAvis} - {self.dateAvis} - {self.idPers}"
 
 
+class Questionnaire(models.Model):
+    idQuestionnaire = models.AutoField(primary_key=True)
+    nomQuestionnaire = models.CharField(max_length=255)
+    descriptionQuestionnaire = models.CharField(max_length=500)
+
+    def __str__(self):
+        return f"{self.idQuestionnaire} - {self.nomQuestionnaire}"
+    
+
+
 class Question(models.Model):
     idQuestion = models.AutoField(primary_key=True)
-    question = models.CharField(max_length=255)
+    textQuestion = models.CharField(max_length=255)
+
+    questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
     def __str__(self):
         return f"{self.idQuestion} - {self.question}"
+    
+
+class Reponse(models.Model):
+    textReponse = models.CharField(max_length=255)
+    score = models.IntegerField()
+    echelle = models.IntegerField()
+
+    questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="questions_reponses", null=False, blank=False)
+
+
+    def __str__(self):
+        return f"{self.idReponse} - {self.textReponse} - {self.score} - {self.poids} - {self.idQuestion} - {self.idQuestionnaire}"
+    
+class Seuil(models.Model):
+    idQuestionnaire = models.AutoField(primary_key=True)
+    idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_seuils", null=False, blank=False)
+    minScore = models.IntegerField()
+    maxScore = models.IntegerField()
+    descriptionSeuil = models.CharField(max_length=255)
+
+    def __str__(self):
+        return f"{self.idSeuil} - {self.minScore} - {self.maxScore} - {self.descriptionSeuil} - {self.idQuestionnaire}"
 
 
 class Statut(models.Model):
