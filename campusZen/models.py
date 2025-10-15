@@ -105,6 +105,7 @@ class Reponse(models.Model):
     def __str__(self):
         return f"{self.idReponse} - {self.textReponse} - {self.score} - {self.poids} - {self.idQuestion} - {self.idQuestionnaire}"
 
+
 class Seuil(models.Model):
     idQuestionnaire = models.AutoField(primary_key=True)
     idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_seuils", null=False, blank=False)
