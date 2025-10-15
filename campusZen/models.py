@@ -1,27 +1,57 @@
 from django.db import models
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.utils import timezone
 
 
-class Personne(models.Model):
+class PersonneManager(BaseUserManager):
+    def create_user(self, emailPers, passwordPers=None, **extra_fields):
+        if not emailPers:
+            raise ValueError("L'utilisateur doit avoir une adresse email")
+
+        emailPers = self.normalize_email(emailPers)
+        user = self.model(emailPers=emailPers, **extra_fields)
+        user.set_password(passwordPers)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, emailPers, passwordPers=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('role', 'admin')
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError("Le superutilisateur doit avoir is_staff=True.")
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError("Le superutilisateur doit avoir is_superuser=True.")
+
+        return self.create_user(emailPers, passwordPers, **extra_fields)
+
+
+class Personne(AbstractBaseUser, PermissionsMixin):
+    """Modèle utilisateur personnalisé basé sur l'email."""
+
     idPers = models.AutoField(primary_key=True)
     emailPers = models.EmailField(max_length=255, unique=True)
-    passwordPers = models.CharField(max_length=255)  # sera hashé
-    role = models.CharField(max_length=50, choices=(('étudiant', 'Étudiant'), ('admin', 'Admin')), default='étudiant')
-    lastConnection = models.DateTimeField(auto_now=True)
+    role = models.CharField(
+        max_length=50,
+        choices=(('étudiant', 'Étudiant'), ('admin', 'Admin')),
+        default='étudiant'
+    )
+    lastConnection = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
 
-    def __str__(self):
-        return f"{self.idPers} - {self.emailPers} - {self.role} - {self.lastConnection}"
+    USERNAME_FIELD = 'emailPers'
+    REQUIRED_FIELDS = []
 
-    def set_password(self, password):
-        self.passwordPers = make_password(password)
-
-    def check_password(self, password):
-        return check_password(password, self.passwordPers)
+    objects = PersonneManager()
 
     @property
     def id(self):
-        # alias pour que JWT trouve un "id"
         return self.idPers
+
+    def __str__(self):
+        return f"{self.emailPers} ({self.role})"
 
 
 class Professionnel(models.Model):

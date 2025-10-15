@@ -2,64 +2,79 @@ from rest_framework import viewsets
 from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
-from .serializers import PersonneSerializer, ProfessionnelSerializer, ClimatSerializer, MessageSerializer, RessourceSerializer, AvisSerializer, QuestionSerializer, StatutSerializer, ConsulteRessourceSerializer, RecuSerializer, ConsulteProSerializer
+from .serializers import (PersonneSerializer, ProfessionnelSerializer, ClimatSerializer, MessageSerializer, RessourceSerializer,
+    AvisSerializer, QuestionSerializer, StatutSerializer, ConsulteRessourceSerializer, RecuSerializer,
+    ConsulteProSerializer, CustomTokenObtainPairSerializer
+)
 # from django.shortcuts import render
 # from django.contrib.auth import authenticate
 
 
 class PersonneViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
 
 
 class ProfessionnelViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Professionnel.objects.all()
     serializer_class = ProfessionnelSerializer
 
 
 class ClimatViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Climat.objects.all()
     serializer_class = ClimatSerializer
 
 
 class MessageViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Message.objects.select_related('idClimat').all()
     serializer_class = MessageSerializer
 
 
 class RessourceViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Ressource.objects.all()
     serializer_class = RessourceSerializer
 
 
 class AvisViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Avis.objects.select_related('idPers').all()
     serializer_class = AvisSerializer
 
 
 class QuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
 
 class StatutViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Statut.objects.select_related("idPers", "idClimat").all()
     serializer_class = StatutSerializer
 
 
 class ConsulteRessourceViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = ConsulteRessource.objects.select_related('idR', 'idPers').all()
     serializer_class = ConsulteRessourceSerializer
 
 
 class RecuViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = Recu.objects.select_related("idPers", "idMessage").all()
     serializer_class = RecuSerializer
 
 
 class ConsulteProViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
     queryset = ConsultePro.objects.all()
     serializer_class = ConsulteProSerializer
 
@@ -73,35 +88,13 @@ class RegisterView(generics.CreateAPIView):
         return Response({"message": "Veuillez utiliser la méthode POST pour vous inscrire."}, status=status.HTTP_200_OK)
 
 
-class LoginView(APIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = PersonneSerializer
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
-    def get_queryset(self):
-        return Personne.objects.all()
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        return Response({"message": "Veuillez utiliser la méthode POST pour vous connecter."}, status=status.HTTP_200_OK)
-
-    def post(self, request):
-        email = request.data.get("emailPers")
-        password = request.data.get("passwordPers")
-
-        try:
-            personne = Personne.objects.get(emailPers=email)
-        except Personne.DoesNotExist:
-            return Response({"error": "Utilisateur introuvable"}, status=status.HTTP_404_NOT_FOUND)
-
-        if not personne.check_password(password):
-            return Response({"error": "Mot de passe incorrect"}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Génération JWT
-        refresh = RefreshToken.for_user(personne)
-
-        return Response({
-            "message": "Vous êtes bien connecté ✅",
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "idPers": personne.idPers,
-            "mail": personne.emailPers,
-        }, status=status.HTTP_200_OK)
+        serializer = PersonneSerializer(request.user)
+        return Response(serializer.data)
