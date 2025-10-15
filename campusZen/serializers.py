@@ -1,5 +1,20 @@
 from rest_framework import serializers
-from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
+from .models import (
+    Personne,
+    Professionnel,
+    Climat,
+    Message,
+    Ressource,
+    Avis,
+    Question,
+    Statut,
+    ConsulteRessource,
+    Recu,
+    ConsultePro,
+    Questionnaire,
+    Reponse,
+    Seuil,
+)
 
 
 class PersonneSerializer(serializers.ModelSerializer):
@@ -16,10 +31,6 @@ class PersonneSerializer(serializers.ModelSerializer):
         personne.save()
         return personne
 
-    @property
-    def id(self):  # simple alias pour JWT
-        return self.idPers
-
 
 class ClimatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -34,7 +45,6 @@ class MessageSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        # fields = '__all__'
         fields = ["idMessage", "message", "idClimat", "idClimat_id"]
 
 
@@ -65,8 +75,6 @@ class QuestionSerializer(serializers.ModelSerializer):
 
 
 class ConsulteRessourceSerializer(serializers.ModelSerializer):
-    # idR = RessourceSerializer()
-    # idPers = PersonneSerializer()
     class Meta:
         model = ConsulteRessource
         fields = '__all__'
@@ -87,4 +95,22 @@ class StatutSerializer(serializers.ModelSerializer):
 class RecuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recu
+        fields = '__all__'
+
+
+class QuestionnaireSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Questionnaire
+        fields = '__all__'
+
+
+class ResponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reponse
+        fields = '__all__'
+
+
+class SeuilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seuil
         fields = '__all__'

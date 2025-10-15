@@ -92,7 +92,7 @@ class Question(models.Model):
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
     def __str__(self):
-        return f"{self.idQuestion} - {self.question}"
+        return f"{self.idQuestion} - {self.textQuestion}"
 
 
 class Reponse(models.Model):
@@ -103,10 +103,12 @@ class Reponse(models.Model):
     questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="questions_reponses", null=False, blank=False)
 
     def __str__(self):
-        return f"{self.idReponse} - {self.textReponse} - {self.score} - {self.poids} - {self.idQuestion} - {self.idQuestionnaire}"
+        # idReponse, poids, idQuestion, idQuestionnaire attributes don't exist; show useful existing fields
+        return f"Reponse to Q:{self.questionId.idQuestion} - {self.textReponse} (score={self.score}, echelle={self.echelle})"
 
 
 class Seuil(models.Model):
+    # original schema: idQuestionnaire is the primary key (kept to match existing DB schema)
     idQuestionnaire = models.AutoField(primary_key=True)
     idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_seuils", null=False, blank=False)
     minScore = models.IntegerField()
@@ -114,7 +116,7 @@ class Seuil(models.Model):
     descriptionSeuil = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.idSeuil} - {self.minScore} - {self.maxScore} - {self.descriptionSeuil} - {self.idQuestionnaire}"
+        return f"{self.idQuestionnaire} - {self.minScore} - {self.maxScore} - {self.descriptionSeuil} - {self.idClimat}"
 
 
 class Statut(models.Model):

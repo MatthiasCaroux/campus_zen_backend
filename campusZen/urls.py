@@ -1,7 +1,8 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import PersonneViewSet, ProfessionnelViewSet, ClimatViewSet, MessageViewSet, RessourceViewSet, AvisViewSet, QuestionViewSet, StatutViewSet, ConsulteRessourceViewSet, RecuViewSet, ConsulteProViewSet, RegisterView, LoginView
+from .views import *
+
 
 router = DefaultRouter()
 router.register(r'personnes', PersonneViewSet)
@@ -15,6 +16,9 @@ router.register(r'statuts', StatutViewSet)
 router.register(r'consultesRessources', ConsulteRessourceViewSet)
 router.register(r'recus', RecuViewSet)
 router.register(r'consultesPro', ConsulteProViewSet)
+router.register(r'questionnaires', QuestionnaireViewSet)
+router.register(r'reponses', ResponseViewSet)
+router.register(r'seuils', SeuilViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
