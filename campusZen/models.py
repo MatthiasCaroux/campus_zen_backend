@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
-from django.contrib.auth.hashers import make_password, check_password
+
 
 class PersonneManager(BaseUserManager):
     def create_user(self, emailPers, passwordPers=None, **extra_fields):
@@ -52,6 +52,7 @@ class Personne(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return f"{self.emailPers} ({self.role})"
+
 
 class Professionnel(models.Model):
     idPro = models.AutoField(primary_key=True)

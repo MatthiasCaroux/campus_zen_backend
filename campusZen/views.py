@@ -2,11 +2,13 @@ from rest_framework import viewsets
 from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
-from .serializers import PersonneSerializer, ProfessionnelSerializer, ClimatSerializer, MessageSerializer, RessourceSerializer, AvisSerializer, QuestionSerializer, StatutSerializer, ConsulteRessourceSerializer, RecuSerializer, ConsulteProSerializer, CustomTokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
+from .serializers import (PersonneSerializer, ProfessionnelSerializer, ClimatSerializer, MessageSerializer, RessourceSerializer,
+    AvisSerializer, QuestionSerializer, StatutSerializer, ConsulteRessourceSerializer, RecuSerializer,
+    ConsulteProSerializer, CustomTokenObtainPairSerializer
+)
 # from django.shortcuts import render
 # from django.contrib.auth import authenticate
 
@@ -88,3 +90,11 @@ class RegisterView(generics.CreateAPIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = PersonneSerializer(request.user)
+        return Response(serializer.data)

@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
+from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
 
 
 class PersonneSerializer(serializers.ModelSerializer):
@@ -22,7 +23,45 @@ class PersonneSerializer(serializers.ModelSerializer):
     def id(self):  # simple alias pour JWT
         return self.idPers
 
+
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    username_field = 'emailPers'
+
+    emailPers = serializers.EmailField(required=True)
+    password = serializers.CharField(write_only=True, required=True)
+
+    def validate(self, attrs):
+        emailPers = attrs.get('emailPers')
+        passwordPers = attrs.get('password')
+
+        if emailPers is None or passwordPers is None:
+            raise serializers.ValidationError({
+                'detail': 'Les champs emailPers et passwordPers sont requis.'
+            })
+
+        # Authentification de l'utilisateur
+        user = authenticate(
+            request=self.context.get('request'),
+            emailPers=emailPers,
+            password=passwordPers
+        )
+
+        if user is None:
+            raise serializers.ValidationError({'detail': 'Identifiants invalides.'})
+
+        # Appel du parent pour générer les tokens
+        data = super().validate({
+            self.username_field: emailPers,
+            'password': passwordPers
+        })
+
+        # Ajout d'informations supplémentaires dans la réponse
+        data['idPers'] = user.idPers
+        data['role'] = user.role
+        data['emailPers'] = user.emailPers
+
+        return data
+
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
@@ -30,6 +69,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['role'] = user.role
         token['emailPers'] = user.emailPers
         return token
+
 
 class ClimatSerializer(serializers.ModelSerializer):
     class Meta:
