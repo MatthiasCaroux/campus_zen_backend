@@ -2,7 +2,7 @@ from rest_framework import viewsets
 from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import *
 from .serializers import *
@@ -11,62 +11,72 @@ from .serializers import *
 
 
 class PersonneViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
 
 
 class ProfessionnelViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Professionnel.objects.all()
     serializer_class = ProfessionnelSerializer
 
 
 class ClimatViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Climat.objects.all()
     serializer_class = ClimatSerializer
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Message.objects.select_related('idClimat').all()
     serializer_class = MessageSerializer
 
 
 class RessourceViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Ressource.objects.all()
     serializer_class = RessourceSerializer
 
 
 class AvisViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Avis.objects.select_related('idPers').all()
     serializer_class = AvisSerializer
 
 
 
 class StatutViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Statut.objects.select_related("idPers", "idClimat").all()
     serializer_class = StatutSerializer
 
 
 class ConsulteRessourceViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = ConsulteRessource.objects.select_related('idR', 'idPers').all()
     serializer_class = ConsulteRessourceSerializer
 
 
 class RecuViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = Recu.objects.select_related("idPers", "idMessage").all()
     serializer_class = RecuSerializer
 
 
 class ConsulteProViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     queryset = ConsultePro.objects.all()
     serializer_class = ConsulteProSerializer
 
@@ -85,7 +95,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class MeView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get(self, request):
         serializer = PersonneSerializer(request.user)
