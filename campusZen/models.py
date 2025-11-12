@@ -88,7 +88,7 @@ class Questionnaire(models.Model):
 class Question(models.Model):
     idQuestion = models.AutoField(primary_key=True)
     intituleQuestion = models.CharField(max_length=255)
-    poids = models.FloatField()
+    poids = models.FloatField(default=1.0)
 
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
@@ -97,11 +97,11 @@ class Question(models.Model):
 
 
 class Reponse(models.Model):
-    idReponse = models.AutoField(primary_key=True)
+    idReponse = models.AutoField(primary_key=True, default=None)
     texte = models.CharField(max_length=255)
     score = models.IntegerField()
 
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="reponses")
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="reponses", default=None)
 
     def __str__(self):
         return f"{self.idReponse} - {self.texte} ({self.score})"
@@ -109,8 +109,8 @@ class Reponse(models.Model):
 
 class Seuil(models.Model):
     idSeuil = models.AutoField(primary_key=True)
-    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="seuils")
-    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="seuils")
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="seuils", default=None)
+    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="seuils", default=None)
     minScore = models.IntegerField()
     maxScore = models.IntegerField()
     description = models.CharField(max_length=255)
@@ -121,9 +121,9 @@ class Seuil(models.Model):
 
 
 class Statut(models.Model):
-    personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts")
-    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts")
-    scoreTotal = models.FloatField()
+    personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts", default=None)
+    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts",default=None)
+    scoreTotal = models.FloatField(default=0.0)
     dateStatut = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -152,9 +152,3 @@ class ConsultePro(models.Model):
 
     def __str__(self):
         return f"{self.idPro} - {self.idPers}"
-
-score_user = 0 
-for question in questionnaire : 
-    score_user += score_reponse * poids_question
-
-score_user
