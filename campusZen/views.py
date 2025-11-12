@@ -4,11 +4,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
-from .serializers import (PersonneSerializer, ProfessionnelSerializer, ClimatSerializer, MessageSerializer, RessourceSerializer,
-    AvisSerializer, QuestionSerializer, StatutSerializer, ConsulteRessourceSerializer, RecuSerializer,
-    ConsulteProSerializer, CustomTokenObtainPairSerializer
-)
+from .models import *
+from .serializers import *
 # from django.shortcuts import render
 # from django.contrib.auth import authenticate
 
@@ -48,11 +45,6 @@ class AvisViewSet(viewsets.ModelViewSet):
     queryset = Avis.objects.select_related('idPers').all()
     serializer_class = AvisSerializer
 
-
-class QuestionViewSet(viewsets.ModelViewSet):
-    permission_classes = [IsAuthenticated]
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
 
 
 class StatutViewSet(viewsets.ModelViewSet):
@@ -98,3 +90,23 @@ class MeView(APIView):
     def get(self, request):
         serializer = PersonneSerializer(request.user)
         return Response(serializer.data)
+
+class QuestionnaireViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Questionnaire.objects.all()
+    serializer_class = QuestionnaireSerializer
+
+class ReponseViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Reponse.objects.all()
+    serializer_class = ReponseSerializer
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+class SeuilViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    queryset = Seuil.objects.all()
+    serializer_class = SeuilSerializer
