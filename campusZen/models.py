@@ -62,6 +62,8 @@ class Professionnel(models.Model):
     emailPro = models.EmailField(unique=True)
     telephonePro = models.CharField(max_length=20)
     adressePro = models.CharField(max_length=255)
+    lat = models.FloatField()
+    long = models.FloatField()
 
     def __str__(self):
         return f"{self.nomPro} - {self.prenomPro} - {self.emailPro} - {self.fonctionPro}"
