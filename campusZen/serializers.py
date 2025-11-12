@@ -126,6 +126,7 @@ class RecuSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class QuestionnaireSerializer(serializers.ModelSerializer):
     class Meta:
         model = Questionnaire
@@ -146,4 +147,3 @@ class SeuilSerializer(serializers.ModelSerializer):
         model = Seuil
         fields = '__all__'
 
-        
