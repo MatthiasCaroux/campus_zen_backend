@@ -87,44 +87,47 @@ class Questionnaire(models.Model):
 
 class Question(models.Model):
     idQuestion = models.AutoField(primary_key=True)
-    textQuestion = models.CharField(max_length=255)
+    intituleQuestion = models.CharField(max_length=255)
+    poids = models.FloatField()
 
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
     def __str__(self):
-        return f"{self.idQuestion} - {self.question}"
+        return f"{self.idQuestion} - {self.intituleQuestion}"
 
 
 class Reponse(models.Model):
-    textReponse = models.CharField(max_length=255)
+    idReponse = models.AutoField(primary_key=True)
+    texte = models.CharField(max_length=255)
     score = models.IntegerField()
-    echelle = models.IntegerField()
 
-    questionId = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="questions_reponses", null=False, blank=False)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="reponses")
 
     def __str__(self):
-        return f"{self.idReponse} - {self.textReponse} - {self.score} - {self.poids} - {self.idQuestion} - {self.idQuestionnaire}"
+        return f"{self.idReponse} - {self.texte} ({self.score})"
 
 
 class Seuil(models.Model):
-    idQuestionnaire = models.AutoField(primary_key=True)
-    idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_seuils", null=False, blank=False)
+    idSeuil = models.AutoField(primary_key=True)
+    questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="seuils")
+    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="seuils")
     minScore = models.IntegerField()
     maxScore = models.IntegerField()
-    descriptionSeuil = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
 
     def __str__(self):
-        return f"{self.idSeuil} - {self.minScore} - {self.maxScore} - {self.descriptionSeuil} - {self.idQuestionnaire}"
+        return f"{self.minScore}-{self.maxScore} : {self.description}"
+
 
 
 class Statut(models.Model):
-    idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_statuts", null=False, blank=False)
-    idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_statuts", null=False, blank=False)
+    personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts")
+    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts")
+    scoreTotal = models.FloatField()
     dateStatut = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.idClimat} - {self.idPers} - {self.dateStatut}"
-
+        return f"{self.personne} - {self.climat} - {self.scoreTotal} - {self.dateStatut}"
 
 class ConsulteRessource(models.Model):
     idR = models.ForeignKey(Ressource, on_delete=models.CASCADE, related_name="ressources_consultes", null=False, blank=False)
@@ -149,3 +152,9 @@ class ConsultePro(models.Model):
 
     def __str__(self):
         return f"{self.idPro} - {self.idPers}"
+
+score_user = 0 
+for question in questionnaire : 
+    score_user += score_reponse * poids_question
+
+score_user
