@@ -1,8 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import Personne, Professionnel, Climat, Message, Ressource, Avis, Question, Statut, ConsulteRessource, Recu, ConsultePro
-
+from .models import *
 
 class PersonneSerializer(serializers.ModelSerializer):
     passwordPers = serializers.CharField(write_only=True)
@@ -103,12 +102,6 @@ class ProfessionnelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class QuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Question
-        fields = '__all__'
-
-
 class ConsulteRessourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConsulteRessource
@@ -131,3 +124,26 @@ class RecuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recu
         fields = '__all__'
+
+
+
+class QuestionnaireSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Questionnaire
+        fields = '__all__'
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+class ReponseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reponse
+        fields = '__all__'
+
+class SeuilSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seuil
+        fields = '__all__'
+

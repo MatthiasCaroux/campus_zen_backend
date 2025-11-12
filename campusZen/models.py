@@ -125,7 +125,7 @@ class Question(models.Model):
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
     def __str__(self):
-        return f"{self.idQuestion} - {self.intituleQuestion}"
+        return f"{self.idQuestion} - {self.intituleQuestion} - {self.poids} - {self.questionnaireId}"
 
 
 class Reponse(models.Model):
