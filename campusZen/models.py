@@ -153,8 +153,8 @@ class Seuil(models.Model):
 
 
 class Statut(models.Model):
-    personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts", default=None)
-    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts",default=None)
+    idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts", default=None)
+    idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts",default=None)
     scoreTotal = models.FloatField(default=0.0)
     dateStatut = models.DateTimeField(auto_now=True)
 
