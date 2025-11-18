@@ -56,7 +56,7 @@ class AvisViewSet(viewsets.ModelViewSet):
 class StatutViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
     permission_classes = [AllowAny]
-    queryset = Statut.objects.select_related("personne", "climat").all()
+    queryset = Statut.objects.select_related("idPers", "idClimat").all()
     serializer_class = StatutSerializer
 
 
