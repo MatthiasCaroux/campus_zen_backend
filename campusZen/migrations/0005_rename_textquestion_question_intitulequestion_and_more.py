@@ -14,16 +14,16 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name="question",
-            old_name="textQuestion",
-            new_name="intituleQuestion",
-        ),
-        migrations.RenameField(
-            model_name="reponse",
-            old_name="textReponse",
-            new_name="texte",
-        ),
+            # migrations.RenameField(
+            #     model_name="question",
+            #     old_name="textQuestion",
+            #     new_name="intituleQuestion",
+            # ),
+        # migrations.RenameField(
+        #     model_name="reponse",
+        #     old_name="textReponse",
+        #     new_name="texte",
+        # ),
         migrations.RenameField(
             model_name="seuil",
             old_name="descriptionSeuil",
@@ -34,10 +34,10 @@ class Migration(migrations.Migration):
             old_name="idQuestionnaire",
             new_name="idSeuil",
         ),
-        migrations.RemoveField(
-            model_name="reponse",
-            name="echelle",
-        ),
+        # migrations.RemoveField(
+        #     model_name="reponse",
+        #     name="echelle",
+        # ),
         migrations.RemoveField(
             model_name="reponse",
             name="id",
@@ -73,6 +73,7 @@ class Migration(migrations.Migration):
             name="question",
             field=models.ForeignKey(
                 default=None,
+                null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="reponses",
                 to="campusZen.question",
