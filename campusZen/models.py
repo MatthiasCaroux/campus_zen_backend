@@ -119,7 +119,7 @@ class Questionnaire(models.Model):
 
 class Question(models.Model):
     idQuestion = models.AutoField(primary_key=True)
-    intituleQuestion = models.CharField(max_length=255)
+    intituleQuestion = models.CharField(max_length=255, null=False, blank=False)
     poids = models.FloatField(default=1.0)
 
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
@@ -133,7 +133,8 @@ class Reponse(models.Model):
     texte = models.CharField(max_length=255)
     score = models.IntegerField()
 
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="reponses", default=None)
+    # ForeignKey obligatoire : supprimer default=None qui provoquait des tentatives d'insertion NULL
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="reponses")
 
     def __str__(self):
         return f"{self.idReponse} - {self.texte} ({self.score})"

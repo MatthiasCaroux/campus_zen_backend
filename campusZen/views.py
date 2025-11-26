@@ -3,6 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import *
 from .serializers import *
@@ -163,6 +164,8 @@ class ReponseListView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         question_id = self.kwargs.get('question_pk')
+        if question_id is None:
+            raise ValidationError({"detail": "Paramètre question_pk manquant dans l'URL."})
         serializer.save(question_id=question_id)
 
 
