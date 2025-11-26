@@ -1,3 +1,4 @@
+from datetime import timedelta, datetime
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -58,6 +59,11 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['idPers'] = user.idPers
         data['role'] = user.role
         data['emailPers'] = user.emailPers
+        data['lastConnection'] = str(user.lastConnection)
+        accessLifetime = self.get_token(user).access_token.lifetime
+        data['endAccess'] = (accessLifetime + datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+        refreshLifetime = self.get_token(user).lifetime
+        data['endRefresh'] = (refreshLifetime + datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
 
         return data
 
@@ -67,6 +73,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['idPers'] = user.idPers
         token['role'] = user.role
         token['emailPers'] = user.emailPers
+        token['lastConnection'] = str(user.lastConnection)
         return token
 
 
