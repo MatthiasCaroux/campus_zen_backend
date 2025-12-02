@@ -87,8 +87,19 @@ class Message(models.Model):
 
 
 class Ressource(models.Model):
+    choices_typeR = [
+        ('article', 'Article'),
+        ('video', 'Vidéo'),
+        ('podcast', 'Podcast'),
+        ('livre', 'Livre'),
+        ('site_web', 'Site Web'),
+        ('documentaire', 'Documentaire'),
+        ('film', 'Film'),
+        ('formation', 'Formation'),
+        ('autre', 'Autre'),
+    ]
     idR = models.AutoField(primary_key=True)
-    typeR = models.CharField(max_length=255)
+    typeR = models.CharField(max_length=255, choices=choices_typeR)
     titreR = models.CharField(max_length=255)
     descriptionR = models.CharField(max_length=500)
     lienR = models.CharField(max_length=1000)
