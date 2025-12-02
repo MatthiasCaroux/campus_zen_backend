@@ -61,9 +61,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data['emailPers'] = user.emailPers
         data['lastConnection'] = str(user.lastConnection)
         accessLifetime = self.get_token(user).access_token.lifetime
-        data['endAccess'] = (accessLifetime + datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+        data['endAccess'] = (accessLifetime + datetime.now()).strftime("%Y-%m-%dT%H:%M:%S.000Z")
         refreshLifetime = self.get_token(user).lifetime
-        data['endRefresh'] = (refreshLifetime + datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+        data['endRefresh'] = (refreshLifetime + datetime.now()).strftime("%Y-%m-%dT%H:%M:%S.000Z")
 
         return data
 
