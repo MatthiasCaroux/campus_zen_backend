@@ -113,6 +113,16 @@ class ReponseViewSet(viewsets.ModelViewSet):
     queryset = Reponse.objects.all()
     serializer_class = ReponseSerializer
 
+    def get_queryset(self):
+        queryset = Reponse.objects.all()
+
+        question = self.request.query_params.get("question")
+
+        if question:
+            queryset = queryset.filter(question=question)
+
+        return queryset
+
 class QuestionViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Question.objects.all()
