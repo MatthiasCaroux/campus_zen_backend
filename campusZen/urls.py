@@ -15,6 +15,8 @@ router.register(r'statuts', StatutViewSet)
 router.register(r'consultesRessources', ConsulteRessourceViewSet)
 router.register(r'recus', RecuViewSet)
 router.register(r'consultesPro', ConsulteProViewSet)
+router.register(r'seuils', SeuilViewSet)
+
 
 
 urlpatterns = [
@@ -23,6 +25,7 @@ urlpatterns = [
     path('questionnaire/<int:pk>/question/<int:question_pk>/', QuestionDetailView.as_view(), name='question-detail'),
     path('questionnaire/<int:pk>/question/<int:question_pk>/reponses/', ReponseListView.as_view(), name='reponse-list'),
     path('questionnaire/<int:pk>/question/<int:question_pk>/reponses/<int:reponse_pk>/', ReponseDetailView.as_view(), name='reponse-detail'),
+    path('questionnaire/<int:pk>/submit',SubmitQuestionnaireView.as_view(),name='submit-questionnaire'),
     path('', include(router.urls)),
     path("register/", RegisterView.as_view(), name="register"),
     path("token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),

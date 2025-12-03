@@ -118,6 +118,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
+
 class SeuilViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
     queryset = Seuil.objects.all()
@@ -177,3 +178,39 @@ class ReponseDetailView(generics.RetrieveAPIView):
         question_id = self.kwargs['question_pk']
         reponse_id = self.kwargs['reponse_pk']
         return Reponse.objects.filter(question_id=question_id, idReponse=reponse_id)
+    
+from rest_framework.views import APIView
+from django.db import transaction
+
+class SubmitQuestionnaireView(APIView):
+    permission_classes = [AllowAny]
+
+    @transaction.atomic
+    def post(self, request, pk):
+        data = request.data
+        personne_id = data.get('idPers')
+        reponses = data.get('reponses', [])
+        questionnaire_id = pk
+        print(personne_id)
+        print(reponses)
+        print(questionnaire_id)
+        score_total = 0
+        for reponse in reponses:
+            question_id = reponse.get('idQuestion')
+            score = reponse.get('idReponse')
+            try:
+                question = Question.objects.get(idQuestion=question_id)
+                poids = question.poids
+            except Question.DoesNotExist:
+                poids = 1.0
+            score_total += float(score) * float(poids)
+
+        seuil = Seuil.objects.filter(questionnaire_id=questionnaire_id, minScore__lte=score_total, maxScore__gte=score_total).first()
+        climat = None
+        if seuil and seuil.climat:
+            climat = seuil.climat
+
+        return Response({
+            "score_total": score_total,
+            "idClimat": climat.idClimat
+        }, status=200)
