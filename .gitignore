@@ -51,3 +51,4 @@ __pycache__/
 notes.txt
 .coverage
 pylint-report.txt
+possibleQuery.sqlite3-query
