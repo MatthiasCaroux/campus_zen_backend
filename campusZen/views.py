@@ -118,6 +118,15 @@ class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
+    def get_queryset(self):
+        queryset = Question.objects.all()
+
+        questionnaire_id = self.request.query_params.get("questionnaireId")
+
+        if questionnaire_id:
+            queryset = queryset.filter(questionnaireId=questionnaire_id)
+
+        return queryset
 
 class SeuilViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
