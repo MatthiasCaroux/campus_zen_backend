@@ -19,6 +19,7 @@ router.register(r'consultesPro', ConsulteProViewSet)
 
 router.register(r'questions', QuestionViewSet)
 router.register(r'reponses', ReponseViewSet)
+router.register(r'seuils', SeuilViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
