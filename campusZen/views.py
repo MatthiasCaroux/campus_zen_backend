@@ -226,10 +226,21 @@ class SubmitQuestionnaireView(APIView):
 
         seuil = Seuil.objects.filter(questionnaire_id=questionnaire_id, minScore__lte=score_total, maxScore__gte=score_total).first()
         climat = None
+        idClimat = None
         if seuil and seuil.climat:
             climat = seuil.climat
+            idClimat = climat.idClimat
+
+
+        if not Personne.objects.filter(idPers=personne_id).exists():
+            return Response({"error": "Personne inexistante."}, status=400)
+
+        if climat is None:
+            return Response({"error": "Aucun climat trouvé pour ce score."}, status=400)
+
+        Statut.objects.create(personne_id=personne_id, climat=climat, scoreTotal=score_total)
 
         return Response({
             "score_total": score_total,
-            "idClimat": climat.idClimat
+            "idClimat": idClimat
         }, status=200)
