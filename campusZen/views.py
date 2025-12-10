@@ -223,6 +223,8 @@ class SubmitQuestionnaireView(APIView):
             except Question.DoesNotExist:
                 poids = 1.0
             score_total += float(score) * float(poids)
+        
+        print(score_total)
 
         seuil = Seuil.objects.filter(questionnaire_id=questionnaire_id, minScore__lte=score_total, maxScore__gte=score_total).first()
         climat = None
