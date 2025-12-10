@@ -96,7 +96,7 @@ class RessourceSerializer(serializers.ModelSerializer):
 
 
 class AvisSerializer(serializers.ModelSerializer):
-    idPers = PersonneSerializer()
+    # idPers = PersonneSerializer()
 
     class Meta:
         model = Avis
