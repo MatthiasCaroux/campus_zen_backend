@@ -216,12 +216,18 @@ class SubmitQuestionnaireView(APIView):
         score_total = 0
         for reponse in reponses:
             question_id = reponse.get('idQuestion')
-            score = reponse.get('idReponse')
+            reponse_id = reponse.get('idReponse')
             try:
                 question = Question.objects.get(idQuestion=question_id)
                 poids = question.poids
             except Question.DoesNotExist:
                 poids = 1.0
+
+            try:
+                reponse_obj = Reponse.objects.get(idReponse=reponse_id, question_id=question_id)
+                score = reponse_obj.score
+            except Reponse.DoesNotExist:
+                score = 1.0
             score_total += float(score) * float(poids)
         
         print(score_total)
