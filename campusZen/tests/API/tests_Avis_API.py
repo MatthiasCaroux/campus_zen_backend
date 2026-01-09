@@ -12,6 +12,7 @@ class AvisAPITest(APITestCase):
             emailPers="test@example.com",
             passwordPers="testpass"
         )
+        self.client.force_authenticate(user=self.personne)
         self.avis = Avis.objects.create(
             nbEtoile=5,
             messageAvis="Excellent",

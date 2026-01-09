@@ -14,6 +14,7 @@ class SubmitQuestionnaireAPITest(APITestCase):
             emailPers="test@example.com",
             passwordPers="testpass"
         )
+        self.client.force_authenticate(user=self.personne)
         
         # Créer un questionnaire
         self.questionnaire = Questionnaire.objects.create(

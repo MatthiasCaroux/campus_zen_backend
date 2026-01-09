@@ -1,13 +1,18 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from campusZen.models import Questionnaire
+from campusZen.models import Questionnaire, Personne
 
 class QuestionnaireAPITest(APITestCase):
     """Tests de l'API Questionnaire"""
     
     def setUp(self):
         self.client = APIClient()
+        self.personne = Personne.objects.create_user(
+            emailPers="test@example.com",
+            passwordPers="testpass"
+        )
+        self.client.force_authenticate(user=self.personne)
         self.questionnaire = Questionnaire.objects.create(
             nomQuestionnaire="Test Anxiété",
             descriptionQuestionnaire="Évaluation de l'anxiété"

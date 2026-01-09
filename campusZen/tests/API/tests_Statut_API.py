@@ -12,6 +12,7 @@ class StatutAPITest(APITestCase):
             emailPers="test@example.com",
             passwordPers="testpass"
         )
+        self.client.force_authenticate(user=self.personne)
         self.climat = Climat.objects.create(nomClimat="Anxieux")
         self.statut = Statut.objects.create(
             personne=self.personne,

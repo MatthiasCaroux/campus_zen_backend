@@ -12,6 +12,7 @@ class ConsulteProAPITest(APITestCase):
             emailPers="test@example.com",
             passwordPers="testpass"
         )
+        self.client.force_authenticate(user=self.personne)
         self.pro = Professionnel.objects.create(
             nomPro="Dupont",
             prenomPro="Jean",

@@ -13,6 +13,7 @@ class PersonneAPITest(APITestCase):
             emailPers="test@example.com",
             passwordPers="testpass123"
         )
+        self.client.force_authenticate(user=self.personne)
         self.url = reverse('personne-list')
     
     def test_list_personnes(self):

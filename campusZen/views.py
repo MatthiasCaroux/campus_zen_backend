@@ -12,72 +12,72 @@ from .serializers import *
 
 
 class PersonneViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
 
 
 class ProfessionnelViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Professionnel.objects.all()
     serializer_class = ProfessionnelSerializer
 
 
 class ClimatViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Climat.objects.all()
     serializer_class = ClimatSerializer
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Message.objects.select_related('idClimat').all()
     serializer_class = MessageSerializer
 
 
 class RessourceViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Ressource.objects.all()
     serializer_class = RessourceSerializer
 
 
 class AvisViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Avis.objects.select_related('idPers').all()
     serializer_class = AvisSerializer
 
 
 
 class StatutViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Statut.objects.select_related("personne", "climat").all()
     serializer_class = StatutSerializer
 
 
 class ConsulteRessourceViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = ConsulteRessource.objects.select_related('idR', 'idPers').all()
     serializer_class = ConsulteRessourceSerializer
 
 
 class RecuViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Recu.objects.select_related("idPers", "idMessage").all()
     serializer_class = RecuSerializer
 
 
 class ConsulteProViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = ConsultePro.objects.all()
     serializer_class = ConsulteProSerializer
 
@@ -85,7 +85,8 @@ class ConsulteProViewSet(viewsets.ModelViewSet):
 class RegisterView(generics.CreateAPIView):
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
-    permission_classes = [permissions.AllowAny]
+    # permission_classes = [IsAuthenticated] # Car sinon on ne peut pas s'inscrire
+    permission_classes = [AllowAny]
 
     def get(self, request):
         return Response({"message": "Veuillez utiliser la méthode POST pour vous inscrire."}, status=status.HTTP_200_OK)
@@ -96,20 +97,22 @@ class CustomTokenObtainPairView(TokenObtainPairView):
 
 
 class MeView(APIView):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
 
     def get(self, request):
         serializer = PersonneSerializer(request.user)
         return Response(serializer.data)
 
 class QuestionnairesViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Questionnaire.objects.all()
     serializer_class = QuestionnaireSerializer
 
 class ReponseViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Reponse.objects.all()
     serializer_class = ReponseSerializer
 
@@ -124,7 +127,8 @@ class ReponseViewSet(viewsets.ModelViewSet):
         return queryset
 
 class QuestionViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
 
@@ -139,12 +143,14 @@ class QuestionViewSet(viewsets.ModelViewSet):
         return queryset
 
 class SeuilViewSet(viewsets.ModelViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Seuil.objects.all()
     serializer_class = SeuilSerializer
 
 class QuestionnaireDetailView(generics.RetrieveAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     queryset = Questionnaire.objects.all()
     serializer_class = QuestionnaireSerializer
 
@@ -154,7 +160,8 @@ class QuestionsListView(generics.ListCreateAPIView):
     GET: list questions for questionnaire <pk>
     POST: create a question linked to questionnaire <pk>
     """
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     serializer_class = QuestionSerializer
 
     def get_queryset(self):
@@ -166,7 +173,8 @@ class QuestionsListView(generics.ListCreateAPIView):
         serializer.save(questionnaireId_id=questionnaireId_id)
 
 class QuestionDetailView(generics.RetrieveAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     serializer_class = QuestionSerializer
 
     def get_queryset(self):
@@ -175,7 +183,8 @@ class QuestionDetailView(generics.RetrieveAPIView):
         return Question.objects.filter(questionnaireId_id=questionnaireId_id, idQuestion=questionId_id)
 
 class ReponseListView(generics.ListCreateAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     serializer_class = ReponseSerializer
 
     def get_queryset(self):
@@ -190,7 +199,8 @@ class ReponseListView(generics.ListCreateAPIView):
 
 
 class ReponseDetailView(generics.RetrieveAPIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
     serializer_class = ReponseSerializer
 
     def get_queryset(self):
@@ -202,7 +212,8 @@ from rest_framework.views import APIView
 from django.db import transaction
 
 class SubmitQuestionnaireView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    # permission_classes = [AllowAny]
 
     @transaction.atomic
     def post(self, request, pk):
