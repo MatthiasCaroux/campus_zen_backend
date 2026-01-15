@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Reponse, Question, Questionnaire, Personne
 
+
 class ReponseAPITest(APITestCase):
     """Tests de l'API Reponse"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -27,19 +28,19 @@ class ReponseAPITest(APITestCase):
             question=self.question
         )
         self.url = reverse('reponse-list')
-    
+
     def test_list_reponses(self):
         """Test de la liste des réponses"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-    
+
     def test_filter_reponses_by_question(self):
         """Test du filtrage des réponses par question"""
         response = self.client.get(f"{self.url}?question={self.question.idQuestion}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-    
+
     def test_create_reponse(self):
         """Test de création d'une réponse"""
         data = {

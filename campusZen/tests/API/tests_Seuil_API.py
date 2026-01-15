@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Seuil, Questionnaire, Climat, Personne
 
+
 class SeuilAPITest(APITestCase):
     """Tests de l'API Seuil"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -26,13 +27,13 @@ class SeuilAPITest(APITestCase):
             description="Niveau faible"
         )
         self.url = reverse('seuil-list')
-    
+
     def test_list_seuils(self):
         """Test de la liste des seuils"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-    
+
     def test_create_seuil(self):
         """Test de création d'un seuil"""
         data = {

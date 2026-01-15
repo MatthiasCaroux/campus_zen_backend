@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Personne
 
+
 class MeViewTest(APITestCase):
     """Tests de la vue Me"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -13,7 +14,7 @@ class MeViewTest(APITestCase):
             passwordPers="testpass"
         )
         self.url = reverse('me')
-    
+
     def test_me_view(self):
         """Test de la vue Me (profil utilisateur)"""
         # Note: Cette vue nécessite d'être authentifié normalement

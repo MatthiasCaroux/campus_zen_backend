@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Professionnel, Personne
 
+
 class ProfessionnelAPITest(APITestCase):
     """Tests de l'API Professionnel"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -24,20 +25,20 @@ class ProfessionnelAPITest(APITestCase):
             long=2.3522
         )
         self.url = reverse('professionnel-list')
-    
+
     def test_list_professionnels(self):
         """Test de la liste des professionnels"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-    
+
     def test_retrieve_professionnel(self):
         """Test de récupération d'un professionnel"""
         url = reverse('professionnel-detail', args=[self.pro.idPro])
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['emailPro'], "pro@example.com")
-    
+
     def test_create_professionnel(self):
         """Test de création d'un professionnel"""
         data = {

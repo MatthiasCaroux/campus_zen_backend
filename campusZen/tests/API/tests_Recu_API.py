@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Recu, Personne, Message, Climat
 
+
 class RecuAPITest(APITestCase):
     """Tests de l'API Recu"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -23,7 +24,7 @@ class RecuAPITest(APITestCase):
             idMessage=self.message
         )
         self.url = reverse('recu-list')
-    
+
     def test_list_recus(self):
         """Test de la liste des messages reçus"""
         response = self.client.get(self.url)

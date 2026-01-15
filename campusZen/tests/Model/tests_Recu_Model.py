@@ -1,9 +1,10 @@
 from django.test import TestCase
 from campusZen.models import Recu, Personne, Message, Climat
 
+
 class RecuModelTest(TestCase):
     """Tests pour le modèle Recu"""
-    
+
     def setUp(self):
         self.personne = Personne.objects.create_user(
             emailPers="test@example.com",
@@ -18,7 +19,7 @@ class RecuModelTest(TestCase):
             idPers=self.personne,
             idMessage=self.message
         )
-    
+
     def test_recu_creation(self):
         """Test de création d'un message reçu"""
         self.assertEqual(self.recu.idPers, self.personne)

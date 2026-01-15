@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import ConsulteRessource, Personne, Ressource
 
+
 class ConsulteRessourceAPITest(APITestCase):
     """Tests de l'API ConsulteRessource"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -24,7 +25,7 @@ class ConsulteRessourceAPITest(APITestCase):
             idPers=self.personne
         )
         self.url = reverse('consulteressource-list')
-    
+
     def test_list_consulte_ressources(self):
         """Test de la liste des consultations de ressources"""
         response = self.client.get(self.url)

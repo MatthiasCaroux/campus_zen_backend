@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Avis, Personne
 
+
 class AvisAPITest(APITestCase):
     """Tests de l'API Avis"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -19,13 +20,13 @@ class AvisAPITest(APITestCase):
             idPers=self.personne
         )
         self.url = reverse('avis-list')
-    
+
     def test_list_avis(self):
         """Test de la liste des avis"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-    
+
     def test_create_avis(self):
         """Test de création d'un avis"""
         data = {

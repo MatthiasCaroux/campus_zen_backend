@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from campusZen.models import Ressource, Personne
 
+
 class RessourceAPITest(APITestCase):
     """Tests de l'API Ressource"""
-    
+
     def setUp(self):
         self.client = APIClient()
         self.personne = Personne.objects.create_user(
@@ -20,13 +21,13 @@ class RessourceAPITest(APITestCase):
             lienR="https://example.com/stress"
         )
         self.url = reverse('ressource-list')
-    
+
     def test_list_ressources(self):
         """Test de la liste des ressources"""
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertGreaterEqual(len(response.data), 1)
-    
+
     def test_create_ressource(self):
         """Test de création d'une ressource"""
         data = {
@@ -37,7 +38,7 @@ class RessourceAPITest(APITestCase):
         }
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    
+
     def test_retrieve_ressource(self):
         """Test de récupération d'une ressource"""
         url = reverse('ressource-detail', args=[self.ressource.idR])

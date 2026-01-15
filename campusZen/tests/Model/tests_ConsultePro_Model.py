@@ -4,7 +4,7 @@ from campusZen.models import ConsultePro, Personne, Professionnel
 
 class ConsulteProModelTest(TestCase):
     """Tests pour le modèle ConsultePro"""
-    
+
     def setUp(self):
         self.personne = Personne.objects.create_user(
             emailPers="test@example.com",
@@ -24,7 +24,7 @@ class ConsulteProModelTest(TestCase):
             idPro=self.pro,
             idPers=self.personne
         )
-    
+
     def test_consulte_pro_creation(self):
         """Test de création d'une consultation de professionnel"""
         self.assertEqual(self.consulte.idPro, self.pro)

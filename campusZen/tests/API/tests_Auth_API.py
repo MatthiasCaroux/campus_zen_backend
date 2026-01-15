@@ -3,9 +3,10 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 from campusZen.models import Personne
 
+
 class AuthTests(APITestCase):
     """Tests d'authentification"""
-    
+
     def setUp(self):
         self.register_url = reverse("register")
         self.login_url = reverse("token_obtain_pair")

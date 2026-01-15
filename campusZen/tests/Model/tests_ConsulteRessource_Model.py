@@ -4,7 +4,7 @@ from campusZen.models import ConsulteRessource, Personne, Ressource
 
 class ConsulteRessourceModelTest(TestCase):
     """Tests pour le modèle ConsulteRessource"""
-    
+
     def setUp(self):
         self.personne = Personne.objects.create_user(
             emailPers="test@example.com",
@@ -20,7 +20,7 @@ class ConsulteRessourceModelTest(TestCase):
             idR=self.ressource,
             idPers=self.personne
         )
-    
+
     def test_consulte_ressource_creation(self):
         """Test de création d'une consultation de ressource"""
         self.assertEqual(self.consulte.idR, self.ressource)
