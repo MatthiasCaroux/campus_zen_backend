@@ -4,6 +4,8 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import *
 
 router = DefaultRouter()
+
+# routes crud generees par les viewsets
 router.register(r'personnes', PersonneViewSet)
 router.register(r'professionnels', ProfessionnelViewSet)
 router.register(r'climats', ClimatViewSet)
@@ -23,8 +25,10 @@ router.register(r'questions', QuestionViewSet)
 router.register(r'reponses', ReponseViewSet)
 
 urlpatterns = [
+    # envoi des reponses du questionnaire et retour du score
     path('questionnaire/<int:pk>/submit',SubmitQuestionnaireView.as_view(),name='submit-questionnaire'),
     path('', include(router.urls)),
+    # auth et profil
     path("register/", RegisterView.as_view(), name="register"),
     path("token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),

@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import *
 
+# les serializers transforment les modeles en json et inversement
+
 class PersonneSerializer(serializers.ModelSerializer):
     passwordPers = serializers.CharField(write_only=True)
 
@@ -12,6 +14,7 @@ class PersonneSerializer(serializers.ModelSerializer):
         fields = ("idPers", "emailPers", "passwordPers", "role", "lastConnection")
 
     def create(self, validated_data):
+        # on recupere le mot de passe puis on le hash avec set_password
         password = validated_data.pop("passwordPers", None)
         personne = Personne(**validated_data)
         if password:
@@ -20,7 +23,7 @@ class PersonneSerializer(serializers.ModelSerializer):
         return personne
 
     @property
-    def id(self):  # simple alias pour JWT
+    def id(self):  # simple alias pour jwt
         return self.idPers
 
 
@@ -39,7 +42,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
                 'detail': 'Les champs emailPers et passwordPers sont requis.'
             })
 
-        # Authentification de l'utilisateur
+        # authentification de l utilisateur
         user = authenticate(
             request=self.context.get('request'),
             emailPers=emailPers,
@@ -49,13 +52,13 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         if user is None:
             raise serializers.ValidationError({'detail': 'Identifiants invalides.'})
 
-        # Appel du parent pour générer les tokens
+        # appel du parent pour generer les tokens
         data = super().validate({
             self.username_field: emailPers,
             'password': passwordPers
         })
 
-        # Ajout d'informations supplémentaires dans la réponse
+        # on rajoute des infos utiles pour le front
         data['idPers'] = user.idPers
         data['role'] = user.role
         data['emailPers'] = user.emailPers
@@ -96,7 +99,7 @@ class RessourceSerializer(serializers.ModelSerializer):
 
 
 class AvisSerializer(serializers.ModelSerializer):
-    # idPers = PersonneSerializer()
+    # si besoin on peut imbriquer le serializer personne ici
 
     class Meta:
         model = Avis
