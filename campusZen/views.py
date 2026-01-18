@@ -5,49 +5,52 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.views import TokenObtainPairView
+from django.db import transaction
 from .models import *
 from .serializers import *
-# from django.shortcuts import render
-# from django.contrib.auth import authenticate
+
+# ici on met les endpoints de l api
+# on utilise surtout des viewsets drf pour avoir le crud direct
 
 
 class PersonneViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les utilisateurs
     permission_classes = [AllowAny]
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
 
 
 class ProfessionnelViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les professionnels
     permission_classes = [AllowAny]
     queryset = Professionnel.objects.all()
     serializer_class = ProfessionnelSerializer
 
 
 class ClimatViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les climats
     permission_classes = [AllowAny]
     queryset = Climat.objects.all()
     serializer_class = ClimatSerializer
 
 
 class MessageViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les messages
+    # select_related evite de refaire une requete pour le climat
     permission_classes = [AllowAny]
     queryset = Message.objects.select_related('idClimat').all()
     serializer_class = MessageSerializer
 
 
 class RessourceViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les ressources
     permission_classes = [AllowAny]
     queryset = Ressource.objects.all()
     serializer_class = RessourceSerializer
 
 
 class AvisViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les avis
     permission_classes = [AllowAny]
     queryset = Avis.objects.select_related('idPers').all()
     serializer_class = AvisSerializer
@@ -55,34 +58,35 @@ class AvisViewSet(viewsets.ModelViewSet):
 
 
 class StatutViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # crud sur les statuts
     permission_classes = [AllowAny]
     queryset = Statut.objects.select_related("personne", "climat").all()
     serializer_class = StatutSerializer
 
 
 class ConsulteRessourceViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # lien personne ressource consultee
     permission_classes = [AllowAny]
     queryset = ConsulteRessource.objects.select_related('idR', 'idPers').all()
     serializer_class = ConsulteRessourceSerializer
 
 
 class RecuViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # messages recus par une personne
     permission_classes = [AllowAny]
     queryset = Recu.objects.select_related("idPers", "idMessage").all()
     serializer_class = RecuSerializer
 
 
 class ConsulteProViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    # lien personne professionnel consulte
     permission_classes = [AllowAny]
     queryset = ConsultePro.objects.all()
     serializer_class = ConsulteProSerializer
 
 
 class RegisterView(generics.CreateAPIView):
+    # inscription
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
     permission_classes = [permissions.AllowAny]
@@ -92,11 +96,12 @@ class RegisterView(generics.CreateAPIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    # login jwt
     serializer_class = CustomTokenObtainPairSerializer
 
 
 class MeView(APIView):
-    # permission_classes = [IsAuthenticated]
+    # recupere l utilisateur courant via le token
     permission_classes = [AllowAny]
 
     def get(self, request):
@@ -119,6 +124,7 @@ class ReponseViewSet(viewsets.ModelViewSet):
         question = self.request.query_params.get("question")
 
         if question:
+            # filtre optionnel pour recuperer les reponses d une question
             queryset = queryset.filter(question=question)
 
         return queryset
@@ -134,6 +140,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         questionnaire_id = self.request.query_params.get("questionnaireId")
 
         if questionnaire_id:
+            # filtre optionnel pour recuperer les questions d un questionnaire
             queryset = queryset.filter(questionnaireId=questionnaire_id)
 
         return queryset
@@ -149,11 +156,7 @@ class QuestionnaireDetailView(generics.RetrieveAPIView):
     serializer_class = QuestionnaireSerializer
 
 class QuestionsListView(generics.ListCreateAPIView):
-    """List or create questions for a specific questionnaire (nested endpoint).
-
-    GET: list questions for questionnaire <pk>
-    POST: create a question linked to questionnaire <pk>
-    """
+    # endpoint imbrique pour lister ou creer des questions pour un questionnaire
     permission_classes = [AllowAny]
     serializer_class = QuestionSerializer
 
@@ -186,6 +189,7 @@ class ReponseListView(generics.ListCreateAPIView):
         question_id = self.kwargs.get('question_pk')
         if question_id is None:
             raise ValidationError({"detail": "Paramètre question_pk manquant dans l'URL."})
+        # on force le lien avec la question de l url
         serializer.save(question_id=question_id)
 
 
@@ -197,15 +201,14 @@ class ReponseDetailView(generics.RetrieveAPIView):
         question_id = self.kwargs['question_pk']
         reponse_id = self.kwargs['reponse_pk']
         return Reponse.objects.filter(question_id=question_id, idReponse=reponse_id)
-    
-from rest_framework.views import APIView
-from django.db import transaction
+
 
 class SubmitQuestionnaireView(APIView):
     permission_classes = [AllowAny]
 
     @transaction.atomic
     def post(self, request, pk):
+        # recoit les reponses et calcule un score total
         data = request.data
         personne_id = data.get('idPers')
         reponses = data.get('reponses', [])
@@ -232,6 +235,7 @@ class SubmitQuestionnaireView(APIView):
         
         print(score_total)
 
+        # on cherche le seuil qui correspond au score
         seuil = Seuil.objects.filter(questionnaire_id=questionnaire_id, minScore__lte=score_total, maxScore__gte=score_total).first()
         climat = None
         idClimat = None
@@ -246,6 +250,7 @@ class SubmitQuestionnaireView(APIView):
         if climat is None:
             return Response({"error": "Aucun climat trouvé pour ce score."}, status=400)
 
+        # on enregistre le statut calcule
         Statut.objects.create(personne_id=personne_id, climat=climat, scoreTotal=score_total)
 
         return Response({

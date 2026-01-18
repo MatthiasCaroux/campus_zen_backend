@@ -2,8 +2,12 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.utils import timezone
 
+# ici on met tous les modeles de la base
+# ca sert a definir les tables et les relations
+
 
 class PersonneManager(BaseUserManager):
+    # manager custom pour creer un user ou un admin
     def create_user(self, emailPers, passwordPers=None, **extra_fields):
         if not emailPers:
             raise ValueError("L'utilisateur doit avoir une adresse email")
@@ -28,7 +32,10 @@ class PersonneManager(BaseUserManager):
 
 
 class Personne(AbstractBaseUser, PermissionsMixin):
-    """Modèle utilisateur personnalisé basé sur l'email."""
+    # modele utilisateur custom base sur l email
+
+    # role sert a separer etudiant et admin
+    # lastConnection sert surtout a garder une date de derniere connexion
 
     idPers = models.AutoField(primary_key=True)
     emailPers = models.EmailField(max_length=255, unique=True)
@@ -55,6 +62,7 @@ class Personne(AbstractBaseUser, PermissionsMixin):
 
 
 class Professionnel(models.Model):
+    # professionnel de sante ou contact propose dans l app
     idPro = models.AutoField(primary_key=True)
     nomPro = models.CharField(max_length=255)
     prenomPro = models.CharField(max_length=255)
@@ -70,6 +78,7 @@ class Professionnel(models.Model):
 
 
 class Climat(models.Model):
+    # un climat correspond a un resultat ou un etat general
     idClimat = models.AutoField(primary_key=True)
     nomClimat = models.CharField(max_length=255)
 
@@ -78,6 +87,7 @@ class Climat(models.Model):
 
 
 class Message(models.Model):
+    # message associe a un climat
     idMessage = models.AutoField(primary_key=True)
     message = models.CharField(max_length=10000)
     idClimat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="climats_messages", null=False, blank=False)
@@ -87,6 +97,7 @@ class Message(models.Model):
 
 
 class Ressource(models.Model):
+    # ressource conseillee genre article video etc
     choices_typeR = [
         ('article', 'Article'),
         ('video', 'Vidéo'),
@@ -109,6 +120,7 @@ class Ressource(models.Model):
 
 
 class Avis(models.Model):
+    # avis laisse par une personne
     idAvis = models.AutoField(primary_key=True)
     nbEtoile = models.IntegerField()
     messageAvis = models.CharField(max_length=255)
@@ -120,6 +132,7 @@ class Avis(models.Model):
 
 
 class Questionnaire(models.Model):
+    # questionnaire qui contient plusieurs questions
     idQuestionnaire = models.AutoField(primary_key=True)
     nomQuestionnaire = models.CharField(max_length=255)
     descriptionQuestionnaire = models.CharField(max_length=500)
@@ -129,10 +142,13 @@ class Questionnaire(models.Model):
 
 
 class Question(models.Model):
+    # question d un questionnaire
+    # poids sert a donner plus d importance a certaines questions
     idQuestion = models.AutoField(primary_key=True)
     intituleQuestion = models.CharField(max_length=255, null=False, blank=False)
     poids = models.FloatField(default=1.0)
 
+    # lien vers le questionnaire parent
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
     def __str__(self):
@@ -140,11 +156,12 @@ class Question(models.Model):
 
 
 class Reponse(models.Model):
+    # reponse possible a une question avec un score
     idReponse = models.AutoField(primary_key=True, default=None)
     texte = models.CharField(max_length=255)
     score = models.IntegerField()
 
-    # ForeignKey obligatoire : supprimer default=None qui provoquait des tentatives d'insertion NULL
+    # foreign key obligatoire on garde une reponse liee a une question
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name="reponses")
 
     def __str__(self):
@@ -152,6 +169,7 @@ class Reponse(models.Model):
 
 
 class Seuil(models.Model):
+    # plage de score qui renvoie vers un climat
     idSeuil = models.AutoField(primary_key=True)
     questionnaire = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="seuils", default=None)
     climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="seuils", default=None)
@@ -165,6 +183,7 @@ class Seuil(models.Model):
 
 
 class Statut(models.Model):
+    # resultat final pour une personne a une date donnee
     personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts", default=None)
     climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts",default=None)
     scoreTotal = models.FloatField(default=0.0)
@@ -174,6 +193,7 @@ class Statut(models.Model):
         return f"{self.personne} - {self.climat} - {self.scoreTotal} - {self.dateStatut}"
 
 class ConsulteRessource(models.Model):
+    # trace que la personne a consulte une ressource
     idR = models.ForeignKey(Ressource, on_delete=models.CASCADE, related_name="ressources_consultes", null=False, blank=False)
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_consultes", null=False, blank=False)
 
@@ -182,6 +202,7 @@ class ConsulteRessource(models.Model):
 
 
 class Recu(models.Model):
+    # trace qu une personne a recu un message
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_recus", null=False, blank=False)
     idMessage = models.ForeignKey(Message, on_delete=models.CASCADE, related_name="messages_recus", null=False, blank=False)
     dateMessage = models.DateTimeField(auto_now=True)
@@ -191,6 +212,7 @@ class Recu(models.Model):
 
 
 class ConsultePro(models.Model):
+    # trace que la personne a consulte un professionnel
     idPro = models.ForeignKey(Professionnel, on_delete=models.CASCADE, related_name="professionnels_consultes", null=False, blank=False)
     idPers = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="personnes_consultesPro", null=False, blank=False)
 
