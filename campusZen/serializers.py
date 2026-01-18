@@ -1,13 +1,8 @@
-from datetime import datetime
+from datetime import timedelta, datetime
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import (
-    Personne, Climat, Message, Ressource, Avis, Professionnel,
-    ConsulteRessource, ConsultePro, Statut, Recu, Questionnaire,
-    Question, Reponse, Seuil
-)
-
+from .models import *
 
 class PersonneSerializer(serializers.ModelSerializer):
     passwordPers = serializers.CharField(write_only=True)
@@ -138,25 +133,24 @@ class RecuSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
 class QuestionnaireSerializer(serializers.ModelSerializer):
     class Meta:
         model = Questionnaire
         fields = '__all__'
-
 
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = '__all__'
 
-
 class ReponseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reponse
         fields = '__all__'
 
-
 class SeuilSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seuil
         fields = '__all__'
+
