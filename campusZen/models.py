@@ -163,15 +163,15 @@ class Seuil(models.Model):
         return f"{self.minScore}-{self.maxScore} : {self.description}"
 
 
-
 class Statut(models.Model):
     personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts", default=None)
-    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts",default=None)
+    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts", default=None)
     scoreTotal = models.FloatField(default=0.0)
     dateStatut = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.personne} - {self.climat} - {self.scoreTotal} - {self.dateStatut}"
+
 
 class ConsulteRessource(models.Model):
     idR = models.ForeignKey(Ressource, on_delete=models.CASCADE, related_name="ressources_consultes", null=False, blank=False)
