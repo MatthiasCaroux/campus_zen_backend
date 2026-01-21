@@ -103,7 +103,51 @@ class RegisterView(generics.CreateAPIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    # login jwt avec support HttpOnly cookies pour le web
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            refresh_token = response.data.get('refresh')
+            
+            # Detection du client via header custom
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            is_mobile_app = 'ReactNative' in user_agent or request.headers.get('X-Client-Type') == 'mobile'
+            
+            # Pour le web (Vue.js) : cookies HttpOnly securises
+            if not is_mobile_app and access_token and refresh_token:
+                # Cookie access token (1h)
+                response.set_cookie(
+                    key='access_token',
+                    value=access_token,
+                    httponly=True,      # Protection XSS
+                    secure=False,       # True en production avec HTTPS
+                    samesite='Lax',     # Protection CSRF
+                    max_age=3600        # 1 heure
+                )
+                
+                # Cookie refresh token (60 jours)
+                response.set_cookie(
+                    key='refresh_token',
+                    value=refresh_token,
+                    httponly=True,
+                    secure=False,       # True en production
+                    samesite='Lax',
+                    max_age=60 * 24 * 60 * 60     # 60 jours
+                )
+                
+                # Optionnel : ne pas renvoyer les tokens dans le body pour le web
+                # Decommenter si vous voulez forcer l'utilisation des cookies
+                # del response.data['access']
+                # del response.data['refresh']
+            
+            # Pour React Native : tokens dans le body (pour SecureStore)
+            # Rien a faire, comportement par defaut
+        
+        return response
 
 
 class MeView(APIView):

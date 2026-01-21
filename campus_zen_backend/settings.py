@@ -60,6 +60,9 @@ ROOT_URLCONF = 'campus_zen_backend.urls'
 # Pour le développement (accepte toutes les origines)
 CORS_ALLOW_ALL_ORIGINS = True
 
+# Permet l'envoi de cookies avec les requetes CORS (pour HttpOnly cookies)
+CORS_ALLOW_CREDENTIALS = True
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -145,5 +148,11 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "idPers",
     "USER_ID_CLAIM": "user_id",
+    
+    # Support des cookies HttpOnly (optionnel, gere manuellement dans la vue)
+    "AUTH_COOKIE": "access_token",
+    "AUTH_COOKIE_SECURE": False,  # Mettre True en production avec HTTPS
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_SAMESITE": "Lax",
 }
 
