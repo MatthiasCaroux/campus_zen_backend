@@ -5,7 +5,7 @@ from .views import (
     RessourceViewSet, AvisViewSet, QuestionnairesViewSet, StatutViewSet,
     ConsulteRessourceViewSet, RecuViewSet, ConsulteProViewSet, SeuilViewSet,
     QuestionViewSet, ReponseViewSet, SubmitQuestionnaireView, RegisterView,
-    CustomTokenObtainPairView, CustomTokenRefreshView, MeView
+    CustomTokenObtainPairView, CustomTokenRefreshView, LogoutView, MeView
 )
 
 router = DefaultRouter()
@@ -30,5 +30,6 @@ urlpatterns = [
     path("register/", RegisterView.as_view(), name="register"),
     path("token/", CustomTokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", CustomTokenRefreshView.as_view(), name="token_refresh"),
+    path("logout/", LogoutView.as_view(), name="logout"),
     path("me/", MeView.as_view(), name="me"),
 ]

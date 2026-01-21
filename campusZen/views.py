@@ -196,6 +196,23 @@ class CustomTokenRefreshView(TokenRefreshView):
         return response
 
 
+class LogoutView(APIView):
+    """Vue pour déconnexion : supprime les cookies HttpOnly contenant les tokens JWT"""
+    permission_classes = [AllowAny]  # Pas besoin d'être authentifié pour se déconnecter
+    
+    def post(self, request, *args, **kwargs):
+        response = Response(
+            {"detail": "Déconnexion réussie."},
+            status=status.HTTP_200_OK
+        )
+        
+        # Supprimer les cookies en mettant max_age=0
+        response.delete_cookie('access_token', path='/')
+        response.delete_cookie('refresh_token', path='/')
+        
+        return response
+
+
 class MeView(APIView):
     permission_classes = [IsAuthenticated]
     # permission_classes = [AllowAny]
