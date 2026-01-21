@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import ValidationError
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .models import (
     Seuil, Question, Reponse, Questionnaire, Personne, Professionnel,
     Climat, Message, Ressource, Avis, Statut, ConsulteRessource, Recu,
@@ -119,14 +119,18 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             
             # Pour le web (Vue.js) : cookies HttpOnly securises
             if not is_mobile_app and access_token and refresh_token:
+                # Déterminer si on est en production (HTTPS) ou développement
+                is_production = request.is_secure()
+                
                 # Cookie access token (1h)
                 response.set_cookie(
                     key='access_token',
                     value=access_token,
                     httponly=True,      # Protection XSS
-                    secure=False,       # True en production avec HTTPS
-                    samesite='Lax',     # Protection CSRF
-                    max_age=3600        # 1 heure
+                    secure=is_production,  # True en production (HTTPS)
+                    samesite='None' if is_production else 'Lax',  # None pour cross-origin en prod
+                    max_age=3600,       # 1 heure
+                    path='/'            # Disponible sur tout le site
                 )
                 
                 # Cookie refresh token (60 jours)
@@ -134,9 +138,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                     key='refresh_token',
                     value=refresh_token,
                     httponly=True,
-                    secure=False,       # True en production
-                    samesite='Lax',
-                    max_age=60 * 24 * 60 * 60     # 60 jours
+                    secure=is_production,  # True en production (HTTPS)
+                    samesite='None' if is_production else 'Lax',  # None pour cross-origin en prod
+                    max_age=60 * 24 * 60 * 60,    # 60 jours
+                    path='/'            # Disponible sur tout le site
                 )
                 
                 # Optionnel : ne pas renvoyer les tokens dans le body pour le web
@@ -146,6 +151,47 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             
             # Pour React Native : tokens dans le body (pour SecureStore)
             # Rien a faire, comportement par defaut
+        
+        return response
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """Vue personnalisée pour rafraîchir le token avec support des cookies HttpOnly"""
+    
+    def post(self, request, *args, **kwargs):
+        # Récupérer le refresh token depuis le cookie
+        refresh_token = request.COOKIES.get('refresh_token')
+        
+        # Si le token est dans le cookie et pas dans le body, l'ajouter au body
+        if refresh_token and not request.data.get('refresh'):
+            # Créer une copie mutable des données
+            import copy
+            data = copy.copy(request.data)
+            if hasattr(data, '_mutable'):
+                data._mutable = True
+            data['refresh'] = refresh_token
+            request._full_data = data
+        
+        # Appeler la vue parent
+        response = super().post(request, *args, **kwargs)
+        
+        # Si le refresh a réussi, mettre à jour le cookie access_token
+        if response.status_code == 200:
+            new_access_token = response.data.get('access')
+            
+            if new_access_token:
+                # Déterminer si on est en production (HTTPS) ou développement
+                is_production = request.is_secure()
+                
+                response.set_cookie(
+                    key='access_token',
+                    value=new_access_token,
+                    httponly=True,
+                    secure=is_production,  # True en production avec HTTPS
+                    samesite='None' if is_production else 'Lax',  # None pour cross-origin en prod
+                    max_age=3600,  # 1 heure
+                    path='/'
+                )
         
         return response
 

@@ -51,17 +51,25 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'campusZen.middleware.JWTCookieAuthenticationMiddleware',  # Middleware JWT cookies
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'campus_zen_backend.urls'
 
-# Pour le développement (accepte toutes les origines)
-CORS_ALLOW_ALL_ORIGINS = True
+# Configuration CORS pour cookies HttpOnly
+# IMPORTANT: CORS_ALLOW_ALL_ORIGINS ne peut PAS être True avec CORS_ALLOW_CREDENTIALS
+CORS_ALLOW_ALL_ORIGINS = False
 
 # Permet l'envoi de cookies avec les requetes CORS (pour HttpOnly cookies)
 CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'https://7mhlbv4-anonymous-8081.exp.direct/', 
+]
 
 TEMPLATES = [
     {
