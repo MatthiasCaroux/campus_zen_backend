@@ -145,6 +145,14 @@ class Question(models.Model):
     # question d un questionnaire
     # poids sert a donner plus d importance a certaines questions
     idQuestion = models.AutoField(primary_key=True)
+    TYPE_CHOICES = (
+        ('choix_multiple', 'Choix multiple'),
+        ('choix_unique', 'Choix unique'),
+        ('likert', 'Likert'),
+        ('slider', 'Slider'),
+    )
+
+    typeQuestion = models.CharField(max_length=50, choices=TYPE_CHOICES, null=False, blank=False, default='choix_multiple')
     intituleQuestion = models.CharField(max_length=255, null=False, blank=False)
     poids = models.FloatField(default=1.0)
 
@@ -152,7 +160,7 @@ class Question(models.Model):
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
     def __str__(self):
-        return f"{self.idQuestion} - {self.intituleQuestion} - {self.poids} - {self.questionnaireId}"
+        return f"{self.idQuestion} - {self.intituleQuestion} - {self.poids} - {self.questionnaireId} - {self.typeQuestion} " 
 
 
 class Reponse(models.Model):
