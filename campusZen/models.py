@@ -114,6 +114,7 @@ class Ressource(models.Model):
     titreR = models.CharField(max_length=255)
     descriptionR = models.CharField(max_length=500)
     lienR = models.CharField(max_length=1000)
+    climat = models.ForeignKey('Climat', on_delete=models.SET_NULL, null=True, blank=True, related_name='ressources')
 
     def __str__(self):
         return f"{self.titreR} - {self.typeR}"
