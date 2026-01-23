@@ -93,6 +93,7 @@ class ConsulteProViewSet(viewsets.ModelViewSet):
 
 
 class RegisterView(generics.CreateAPIView):
+    # inscription
     queryset = Personne.objects.all()
     serializer_class = PersonneSerializer
     # permission_classes = [IsAuthenticated] # Car sinon on ne peut pas s'inscrire
@@ -103,6 +104,7 @@ class RegisterView(generics.CreateAPIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
+    # login jwt
     serializer_class = CustomTokenObtainPairSerializer
 
 
@@ -134,6 +136,7 @@ class ReponseViewSet(viewsets.ModelViewSet):
         question = self.request.query_params.get("question")
 
         if question:
+            # filtre optionnel pour recuperer les reponses d une question
             queryset = queryset.filter(question=question)
 
         return queryset
@@ -151,6 +154,7 @@ class QuestionViewSet(viewsets.ModelViewSet):
         questionnaire_id = self.request.query_params.get("questionnaireId")
 
         if questionnaire_id:
+            # filtre optionnel pour recuperer les questions d un questionnaire
             queryset = queryset.filter(questionnaireId=questionnaire_id)
 
         return queryset
@@ -213,6 +217,7 @@ class ReponseListView(generics.ListCreateAPIView):
         question_id = self.kwargs.get('question_pk')
         if question_id is None:
             raise ValidationError({"detail": "Paramètre question_pk manquant dans l'URL."})
+        # on force le lien avec la question de l url
         serializer.save(question_id=question_id)
 
 
@@ -233,6 +238,7 @@ class SubmitQuestionnaireView(APIView):
 
     @transaction.atomic
     def post(self, request, pk):
+        # recoit les reponses et calcule un score total
         data = request.data
         personne_id = data.get('idPers')
         reponses = data.get('reponses', [])
@@ -259,6 +265,7 @@ class SubmitQuestionnaireView(APIView):
 
         print(score_total)
 
+        # on cherche le seuil qui correspond au score
         seuil = Seuil.objects.filter(questionnaire_id=questionnaire_id, minScore__lte=score_total, maxScore__gte=score_total).first()
         climat = None
         idClimat = None
@@ -272,6 +279,7 @@ class SubmitQuestionnaireView(APIView):
         if climat is None:
             return Response({"error": "Aucun climat trouvé pour ce score."}, status=400)
 
+        # on enregistre le statut calcule
         Statut.objects.create(personne_id=personne_id, climat=climat, scoreTotal=score_total)
 
         return Response({
