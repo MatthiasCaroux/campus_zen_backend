@@ -10,17 +10,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # config pour le dev
 
-# cle secrete
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-lcpljd52dld)6=2v^=7#*95nsl9j12m^df@=fph5#ddxo9_op$'
 
-# debug a laisser a false en prod
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # autorise tous les hotes
+ALLOWED_HOSTS = ['*']  # Autorise tous les hôtes 
 
 
 
-# apps installes
+# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise pour servir les fichiers statiques
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -58,7 +59,6 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
-    'https://7mhlbv4-anonymous-8081.exp.direct/', 
 ]
 
 TEMPLATES = [
@@ -121,6 +121,14 @@ USE_TZ = True
 # fichiers statiques
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise configuration pour la compression et le cache
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 AUTH_USER_MODEL = 'campusZen.Personne'
 
@@ -136,6 +144,7 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    # "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=60),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "idPers",
