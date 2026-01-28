@@ -60,6 +60,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
     'http://*.exp.direct',
+    'https://*.exp.direct',
     'https://7mhlbv4-anonymous-8081.exp.direct',
 ]
 
