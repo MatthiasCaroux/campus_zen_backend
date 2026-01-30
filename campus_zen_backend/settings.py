@@ -47,8 +47,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'campus_zen_backend.urls'
 
-# pour le dev on accepte toutes les origines
-CORS_ALLOW_ALL_ORIGINS = True
+# pour le dev on accepte les origines du frontend
+# Les applications mobiles natives ne sont pas soumises aux restrictions CORS. CORS est une protection côté navigateur web uniquement. Une app React Native compilée fait des requêtes HTTP directement, sans vérification d'origine.
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8081",
+    "http://127.0.0.1:8081",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 TEMPLATES = [
     {
