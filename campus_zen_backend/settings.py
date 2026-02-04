@@ -10,17 +10,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # config pour le dev
 
-# cle secrete
+# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-lcpljd52dld)6=2v^=7#*95nsl9j12m^df@=fph5#ddxo9_op$'
 
-# debug a laisser a false en prod
+# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']  # autorise tous les hotes
+ALLOWED_HOSTS = ['*']  # Autorise tous les hôtes 
 
 
 
-# apps installes
+# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,18 +37,32 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise pour servir les fichiers statiques
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'campusZen.middleware.JWTCookieAuthenticationMiddleware',  # Middleware JWT cookies
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'campus_zen_backend.urls'
 
-# pour le dev on accepte toutes les origines
-CORS_ALLOW_ALL_ORIGINS = True
+# Configuration CORS pour cookies HttpOnly
+# IMPORTANT: CORS_ALLOW_ALL_ORIGINS ne peut PAS être True avec CORS_ALLOW_CREDENTIALS
+CORS_ALLOW_ALL_ORIGINS = False
+
+# Permet l'envoi de cookies avec les requetes CORS (pour HttpOnly cookies)
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:*',
+    'http://127.0.0.1:*',
+    'http://*.exp.direct',
+    'https://*.exp.direct',
+    'https://7mhlbv4-anonymous-8081.exp.direct',
+]
 
 TEMPLATES = [
     {
@@ -110,6 +124,14 @@ USE_TZ = True
 # fichiers statiques
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise configuration pour la compression et le cache
+STORAGES = {
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 AUTH_USER_MODEL = 'campusZen.Personne'
 
@@ -125,9 +147,16 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    # "ACCESS_TOKEN_LIFETIME": timedelta(hours=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=60),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "USER_ID_FIELD": "idPers",
     "USER_ID_CLAIM": "user_id",
+    
+    # Support des cookies HttpOnly (optionnel, gere manuellement dans la vue)
+    "AUTH_COOKIE": "access_token",
+    "AUTH_COOKIE_SECURE": False,  # Mettre True en production avec HTTPS
+    "AUTH_COOKIE_HTTP_ONLY": True,
+    "AUTH_COOKIE_SAMESITE": "Lax",
 }
 

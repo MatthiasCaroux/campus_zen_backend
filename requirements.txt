@@ -15,8 +15,10 @@ djangorestframework==3.16.1
 djangorestframework-jwt==1.11.0
 djangorestframework_simplejwt==5.5.1
 flake8==7.3.0
+gunicorn==23.0.0
 isort==6.0.1
 mccabe==0.7.0
+packaging==25.0
 platformdirs==4.4.0
 pycodestyle==2.14.0
 pycparser==2.23
@@ -30,3 +32,4 @@ sqlparse==0.5.3
 tomlkit==0.13.3
 typing_extensions==4.15.0
 tzdata==2025.2
+whitenoise==6.11.0

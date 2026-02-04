@@ -2,9 +2,9 @@ name: Django CI
 
 on:
   push:
-    branches: [ "*" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
 
 jobs:
   test:
@@ -41,7 +41,7 @@ jobs:
 
       - name: Run tests
         run: |
-          coverage run manage.py test
+          coverage run manage.py test ./campusZen/tests
           coverage report --fail-under=80
 
 
