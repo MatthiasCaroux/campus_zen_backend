@@ -4,6 +4,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+from .models import (
+    Seuil, Question, Reponse, Questionnaire, Personne, Professionnel,
+    Climat, Message, Ressource, Avis, Statut, ConsulteRessource, Recu,
+    ConsultePro
+)
+from .serializers import (
+    PersonneSerializer, ProfessionnelSerializer, ClimatSerializer,
+    MessageSerializer, RessourceSerializer, AvisSerializer, StatutSerializer,
+    ConsulteRessourceSerializer, RecuSerializer, ConsulteProSerializer,
+    CustomTokenObtainPairSerializer, QuestionnaireSerializer,
+    QuestionSerializer, ReponseSerializer, SeuilSerializer
+)
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import (
     Seuil, Question, Reponse, Questionnaire, Personne, Professionnel,
@@ -104,8 +117,114 @@ class RegisterView(generics.CreateAPIView):
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
-    # login jwt
+    # login jwt avec support HttpOnly cookies pour le web
     serializer_class = CustomTokenObtainPairSerializer
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            access_token = response.data.get('access')
+            refresh_token = response.data.get('refresh')
+            
+            # Detection du client via header custom
+            user_agent = request.META.get('HTTP_USER_AGENT', '')
+            is_mobile_app = 'ReactNative' in user_agent or request.headers.get('X-Client-Type') == 'mobile'
+            
+            # Pour le web (Vue.js) : cookies HttpOnly securises
+            if not is_mobile_app and access_token and refresh_token:
+                # Déterminer si on est en production (HTTPS) ou développement
+                is_production = request.is_secure()
+                
+                # Cookie access token (1h)
+                response.set_cookie(
+                    key='access_token',
+                    value=access_token,
+                    httponly=True,      # Protection XSS
+                    secure=is_production,  # True en production (HTTPS)
+                    samesite='None' if is_production else 'Lax',  # None pour cross-origin en prod
+                    max_age=3600,       # 1 heure
+                    path='/'            # Disponible sur tout le site
+                )
+                
+                # Cookie refresh token (60 jours)
+                response.set_cookie(
+                    key='refresh_token',
+                    value=refresh_token,
+                    httponly=True,
+                    secure=is_production,  # True en production (HTTPS)
+                    samesite='None' if is_production else 'Lax',  # None pour cross-origin en prod
+                    max_age=60 * 24 * 60 * 60,    # 60 jours
+                    path='/'            # Disponible sur tout le site
+                )
+                
+                # Optionnel : ne pas renvoyer les tokens dans le body pour le web
+                # Decommenter si vous voulez forcer l'utilisation des cookies
+                # del response.data['access']
+                # del response.data['refresh']
+            
+            # Pour React Native : tokens dans le body (pour SecureStore)
+            # Rien a faire, comportement par defaut
+        
+        return response
+
+
+class CustomTokenRefreshView(TokenRefreshView):
+    """Vue personnalisée pour rafraîchir le token avec support des cookies HttpOnly"""
+    
+    def post(self, request, *args, **kwargs):
+        # Récupérer le refresh token depuis le cookie
+        refresh_token = request.COOKIES.get('refresh_token')
+        
+        # Si le token est dans le cookie et pas dans le body, l'ajouter au body
+        if refresh_token and not request.data.get('refresh'):
+            # Créer une copie mutable des données
+            import copy
+            data = copy.copy(request.data)
+            if hasattr(data, '_mutable'):
+                data._mutable = True
+            data['refresh'] = refresh_token
+            request._full_data = data
+        
+        # Appeler la vue parent
+        response = super().post(request, *args, **kwargs)
+        
+        # Si le refresh a réussi, mettre à jour le cookie access_token
+        if response.status_code == 200:
+            new_access_token = response.data.get('access')
+            
+            if new_access_token:
+                # Déterminer si on est en production (HTTPS) ou développement
+                is_production = request.is_secure()
+                
+                response.set_cookie(
+                    key='access_token',
+                    value=new_access_token,
+                    httponly=True,
+                    secure=is_production,  # True en production avec HTTPS
+                    samesite='None' if is_production else 'Lax',  # None pour cross-origin en prod
+                    max_age=3600,  # 1 heure
+                    path='/'
+                )
+        
+        return response
+
+
+class LogoutView(APIView):
+    """Vue pour déconnexion : supprime les cookies HttpOnly contenant les tokens JWT"""
+    permission_classes = [AllowAny]  # Pas besoin d'être authentifié pour se déconnecter
+    
+    def post(self, request, *args, **kwargs):
+        response = Response(
+            {"detail": "Déconnexion réussie."},
+            status=status.HTTP_200_OK
+        )
+        
+        # Supprimer les cookies en mettant max_age=0
+        response.delete_cookie('access_token', path='/')
+        response.delete_cookie('refresh_token', path='/')
+        
+        return response
 
 
 class MeView(APIView):
