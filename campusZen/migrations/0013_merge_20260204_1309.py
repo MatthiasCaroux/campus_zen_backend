@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('campusZen', '0011_alter_question_typequestion'),
+        ('campusZen', '0010_question_typequestion_ressource_climat'),
         ('campusZen', '0012_alter_question_typequestion'),
     ]
 
