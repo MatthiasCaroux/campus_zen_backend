@@ -57,7 +57,9 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:*',
+    'http://localhost:5173',
+    'http://localhost:8081',
+    'http://localhost:8080',
     'http://127.0.0.1:*',
     'http://*.exp.direct',
     'https://*.exp.direct',
