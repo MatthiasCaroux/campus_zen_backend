@@ -114,6 +114,7 @@ class Ressource(models.Model):
     titreR = models.CharField(max_length=255)
     descriptionR = models.CharField(max_length=500)
     lienR = models.CharField(max_length=1000)
+    climat = models.ForeignKey('Climat', on_delete=models.SET_NULL, null=True, blank=True, related_name='ressources')
 
     def __str__(self):
         return f"{self.titreR} - {self.typeR}"
@@ -181,16 +182,16 @@ class Seuil(models.Model):
         return f"{self.minScore}-{self.maxScore} : {self.description}"
 
 
-
 class Statut(models.Model):
     # resultat final pour une personne a une date donnee
     personne = models.ForeignKey(Personne, on_delete=models.CASCADE, related_name="statuts", default=None)
-    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts",default=None)
+    climat = models.ForeignKey(Climat, on_delete=models.CASCADE, related_name="statuts", default=None)
     scoreTotal = models.FloatField(default=0.0)
     dateStatut = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.personne} - {self.climat} - {self.scoreTotal} - {self.dateStatut}"
+
 
 class ConsulteRessource(models.Model):
     # trace que la personne a consulte une ressource
