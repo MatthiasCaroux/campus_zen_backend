@@ -148,7 +148,7 @@ class Question(models.Model):
     TYPE_CHOICES = (
         ('likert', 'Likert'),
         ('slider', 'Slider'),
-        ('smileys', 'Smiley'),
+        ('smiley', 'Smiley'),
     )
 
     typeQuestion = models.CharField(max_length=50, choices=TYPE_CHOICES, null=False, blank=False, default='likert')
