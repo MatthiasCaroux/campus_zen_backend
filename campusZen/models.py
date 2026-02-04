@@ -146,6 +146,13 @@ class Question(models.Model):
     # question d un questionnaire
     # poids sert a donner plus d importance a certaines questions
     idQuestion = models.AutoField(primary_key=True)
+    TYPE_CHOICES = (
+        ('likert', 'Likert'),
+        ('slider', 'Slider'),
+        ('smiley', 'Smiley'),
+    )
+
+    typeQuestion = models.CharField(max_length=50, choices=TYPE_CHOICES, null=False, blank=False, default='likert')
     intituleQuestion = models.CharField(max_length=255, null=False, blank=False)
     poids = models.FloatField(default=1.0)
 
