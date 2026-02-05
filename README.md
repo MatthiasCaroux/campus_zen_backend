@@ -45,7 +45,7 @@ Campus Zen Backend est une **API REST complète** construite avec Django et Djan
 ### 1. Cloner et configurer
 
 ```bash
-git clone <URL-du-repository>
+git clone https://github.com/MatthiasCaroux/campus_zen_backend.git
 cd campus_zen_backend
 python -m venv venv
 # Windows: venv\Scripts\activate
