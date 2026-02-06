@@ -110,6 +110,10 @@ screen -S django-api -X quit
 
 Dans le screen, il est recommandé de lancer le script `start_api.sh` situé dans le home.
 
+### Sur un navigateur
+
+Pour consulter l'API depuis un navigateur, ouvrez : `https://incidents-bouake.com/api/`
+
 ## 🔌 API Endpoints
 
 ### Endpoints principaux
