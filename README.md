@@ -1,8 +1,8 @@
-# Campus Zen Backend - API REST Django
+# CampusZen Backend - API REST Django
 
 <div align="center">
 
-**Backend API** pour la plateforme Campus Zen
+**Backend API** pour la plateforme CampusZen
 
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/Django-4.2-green.svg)](https://www.djangoproject.com/)
@@ -24,7 +24,7 @@
 
 ## 🎯 Aperçu
 
-Campus Zen Backend est une **API REST complète** construite avec Django et Django REST Framework :
+CampusZen Backend est une **API REST complète** construite avec Django et Django REST Framework :
 
 ✅ Gestion complète des questionnaires et questions  
 ✅ Authentification sécurisée (JWT + Cookies HttpOnly)  
