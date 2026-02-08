@@ -137,9 +137,10 @@ class Questionnaire(models.Model):
     idQuestionnaire = models.AutoField(primary_key=True)
     nomQuestionnaire = models.CharField(max_length=255)
     descriptionQuestionnaire = models.CharField(max_length=500)
+    actif = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.idQuestionnaire} - {self.nomQuestionnaire}"
+        return f"{self.idQuestionnaire} - {self.nomQuestionnaire} ({'actif' if self.actif else 'inactif'})"
 
 
 class Question(models.Model):
