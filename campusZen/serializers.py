@@ -16,7 +16,7 @@ class PersonneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Personne
-        fields = ("idPers", "emailPers", "passwordPers", "role", "lastConnection")
+        fields = ("idPers", "login", "passwordPers", "role", "lastConnection")
 
     def create(self, validated_data):
         # on recupere le mot de passe puis on le hash avec set_password
@@ -33,24 +33,24 @@ class PersonneSerializer(serializers.ModelSerializer):
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
-    username_field = 'emailPers'
+    username_field = 'login'
 
-    emailPers = serializers.EmailField(required=True)
+    login = serializers.CharField(required=True)
     password = serializers.CharField(write_only=True, required=True)
 
     def validate(self, attrs):
-        emailPers = attrs.get('emailPers')
+        login = attrs.get('login')
         passwordPers = attrs.get('password')
 
-        if emailPers is None or passwordPers is None:
+        if login is None or passwordPers is None:
             raise serializers.ValidationError({
-                'detail': 'Les champs emailPers et passwordPers sont requis.'
+                'detail': 'Les champs login et password sont requis.'
             })
 
         # authentification de l utilisateur
         user = authenticate(
             request=self.context.get('request'),
-            emailPers=emailPers,
+            login=login,
             password=passwordPers
         )
 
@@ -59,14 +59,14 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         # appel du parent pour generer les tokens
         data = super().validate({
-            self.username_field: emailPers,
+            self.username_field: login,
             'password': passwordPers
         })
 
         # on rajoute des infos utiles pour le front
         data['idPers'] = user.idPers
         data['role'] = user.role
-        data['emailPers'] = user.emailPers
+        data['login'] = user.login
         data['lastConnection'] = str(user.lastConnection)
         accessLifetime = self.get_token(user).access_token.lifetime
         data['endAccess'] = (accessLifetime + datetime.now()).strftime("%Y-%m-%dT%H:%M:%S.000Z")
@@ -80,7 +80,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['idPers'] = user.idPers
         token['role'] = user.role
-        token['emailPers'] = user.emailPers
+        token['login'] = user.login
         token['lastConnection'] = str(user.lastConnection)
         return token
 

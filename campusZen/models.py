@@ -8,17 +8,16 @@ from django.utils import timezone
 
 class PersonneManager(BaseUserManager):
     # manager custom pour creer un user ou un admin
-    def create_user(self, emailPers, passwordPers=None, **extra_fields):
-        if not emailPers:
-            raise ValueError("L'utilisateur doit avoir une adresse email")
+    def create_user(self, login, passwordPers=None, **extra_fields):
+        if not login:
+            raise ValueError("L'utilisateur doit avoir un identifiant")
 
-        emailPers = self.normalize_email(emailPers)
-        user = self.model(emailPers=emailPers, **extra_fields)
+        user = self.model(login=login, **extra_fields)
         user.set_password(passwordPers)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, emailPers, passwordPers=None, **extra_fields):
+    def create_superuser(self, login, passwordPers=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('role', 'admin')
@@ -28,17 +27,17 @@ class PersonneManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError("Le superutilisateur doit avoir is_superuser=True.")
 
-        return self.create_user(emailPers, passwordPers, **extra_fields)
+        return self.create_user(login, passwordPers, **extra_fields)
 
 
 class Personne(AbstractBaseUser, PermissionsMixin):
-    # modele utilisateur custom base sur l email
+    # modele utilisateur custom base sur un login simple
 
     # role sert a separer etudiant et admin
     # lastConnection sert surtout a garder une date de derniere connexion
 
     idPers = models.AutoField(primary_key=True)
-    emailPers = models.EmailField(max_length=255, unique=True)
+    login = models.CharField(max_length=150, unique=True)
     role = models.CharField(
         max_length=50,
         choices=(('étudiant', 'Étudiant'), ('admin', 'Admin')),
@@ -48,7 +47,7 @@ class Personne(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
-    USERNAME_FIELD = 'emailPers'
+    USERNAME_FIELD = 'login'
     REQUIRED_FIELDS = []
 
     objects = PersonneManager()
@@ -58,7 +57,7 @@ class Personne(AbstractBaseUser, PermissionsMixin):
         return self.idPers
 
     def __str__(self):
-        return f"{self.emailPers} ({self.role})"
+        return f"{self.login} ({self.role})"
 
 
 class Professionnel(models.Model):
