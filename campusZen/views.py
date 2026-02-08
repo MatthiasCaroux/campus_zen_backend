@@ -305,7 +305,7 @@ class QuestionsListView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         questionnaireId_id = self.kwargs['pk']
-        return Question.objects.filter(questionnaireId_id=questionnaireId_id)
+        return Question.objects.filter(questionnaireId_id=questionnaireId_id).order_by('ordre')
 
     def perform_create(self, serializer):
         questionnaireId_id = self.kwargs.get('pk')

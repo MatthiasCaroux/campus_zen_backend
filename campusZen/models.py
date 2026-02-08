@@ -155,12 +155,16 @@ class Question(models.Model):
     typeQuestion = models.CharField(max_length=50, choices=TYPE_CHOICES, null=False, blank=False, default='likert')
     intituleQuestion = models.CharField(max_length=255, null=False, blank=False)
     poids = models.FloatField(default=1.0)
+    ordre = models.IntegerField(default=0)
 
     # lien vers le questionnaire parent
     questionnaireId = models.ForeignKey(Questionnaire, on_delete=models.CASCADE, related_name="questionnaires_questions", null=False, blank=False, default=1)
 
+    class Meta:
+        ordering = ['ordre']
+
     def __str__(self):
-        return f"{self.idQuestion} - {self.intituleQuestion} - {self.poids} - {self.questionnaireId}"
+        return f"{self.idQuestion} - {self.intituleQuestion} - {self.poids} - {self.ordre} - {self.questionnaireId}"
 
 
 class Reponse(models.Model):
