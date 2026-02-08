@@ -45,3 +45,10 @@ Thumbs.db
 
 # Docker
 .docker/
+
+__pycache__/
+
+notes.txt
+.coverage
+pylint-report.txt
+possibleQuery.sqlite3-query
